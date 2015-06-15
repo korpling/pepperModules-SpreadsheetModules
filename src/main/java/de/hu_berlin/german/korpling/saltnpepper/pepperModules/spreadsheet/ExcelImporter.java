@@ -15,7 +15,7 @@
  *
  *
  */
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.sampleModules;
+package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -85,10 +85,10 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
 //TODO change the name of the component, for example use the format name and the ending Importer (FORMATImporterComponent)
 @Component(name="SampleImporterComponent", factory="PepperImporterComponentFactory")
 //TODO change the name of the class from 'SampleImporter' to whatever you like, in Eclipse you can do that via marking the name and press STRG + ALT + 'r' 
-public class SampleImporter extends PepperImporterImpl implements PepperImporter{
+public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 // =================================================== mandatory ===================================================
 	// this is a logger, for recording messages during program process, like debug messages
-	private static final Logger logger= LoggerFactory.getLogger(SampleImporter.class);
+	private static final Logger logger= LoggerFactory.getLogger(ExcelImporter.class);
 	
 	/**
 	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
@@ -97,7 +97,7 @@ public class SampleImporter extends PepperImporterImpl implements PepperImporter
 	 * The coordinates (modules name, version and supported formats) are a kind of a fingerprint, 
 	 * which should make your module unique.
 	 */
-	public SampleImporter(){
+	public ExcelImporter(){
 		super();
 		//TODO change the name of the module, for example use the format name and the ending Importer (FORMATImporter)
 		this.setName("SampleImporter");

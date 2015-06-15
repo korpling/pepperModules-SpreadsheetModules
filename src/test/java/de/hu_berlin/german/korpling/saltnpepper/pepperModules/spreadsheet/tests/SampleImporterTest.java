@@ -15,7 +15,7 @@
  *
  *
  */
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.sampleModules.tests;
+package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,13 +27,13 @@ import org.junit.Test;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.common.CorpusDesc;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.common.FormatDesc;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.testFramework.PepperImporterTest;
-import de.hu_berlin.german.korpling.saltnpepper.pepperModules.sampleModules.SampleImporter;
+import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.ExcelImporter;
 import de.hu_berlin.german.korpling.saltnpepper.salt.SaltFactory;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SCorpus;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SDocument;
 
 /**
- * This is a dummy implementation of a JUnit test for testing the {@link SampleImporter} class.
+ * This is a dummy implementation of a JUnit test for testing the {@link ExcelImporter} class.
  * Feel free to adapt and enhance this test class for real tests to check the work of your importer.
  * If you are not confirm with JUnit, please have a look at <a href="http://www.vogella.com/tutorials/JUnit/article.html">
  * http://www.vogella.com/tutorials/JUnit/article.html</a>.
@@ -52,7 +52,7 @@ public class SampleImporterTest extends PepperImporterTest{
 	 */
 	@Before
 	public void setUp(){
-		setFixture(new SampleImporter());
+		setFixture(new ExcelImporter());
 		
 		//TODO set the formats to be supported by your importer, so that they can be checked
 		FormatDesc formatDef= new FormatDesc();
