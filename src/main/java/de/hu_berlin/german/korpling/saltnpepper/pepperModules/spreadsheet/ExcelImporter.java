@@ -88,7 +88,7 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 		super();
 		this.setName("ExcelImporter");
 		this.addSupportedFormat("excel", "1.0", null);
-		this.getSDocumentEndings().add("xslx");
+		this.getSDocumentEndings().add("xlsx");
 	}
 	
 	
