@@ -30,13 +30,8 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructu
 
 
 /**
- * This class is a dummy implementation for a mapper, to show how it works. This  sample mapper 
- * only produces a fixed document-structure in method  {@link ExcelMapper#mapSDocument()} and enhances the 
- * corpora for further meta-annotations in the method {@link ExcelMapper#mapSCorpus()}.
- * <br/>
- * In production, it might be better to implement the mapper in its own file, we just did it here for 
- * compactness of the code. 
- * @author Florian Zipser
+ *  
+ * @author Vivian Voigt
  *
  */
 public class ExcelMapper extends PepperMapperImpl implements PepperMapper{

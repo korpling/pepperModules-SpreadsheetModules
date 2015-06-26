@@ -39,39 +39,7 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
 
 /**
- * This is a dummy implementation of a {@link PepperImporter}, which can be used as a template to create your own
- * module from. The current implementation creates a corpus-structure looking like this:
- * <pre>
- *       c1
- *    /      \
- *   c2      c3
- *  /  \    /  \
- * d1  d2  d3  d4
- * </pre>
- * For each document d1, d2, d3 and d4 the same document-structure is created. The document-structure contains 
- * the following structure and annotations:
- * <ol>
- * 	<li>primary data</li>
- *  <li>tokenization</li>
- *  <li>part-of-speech annotation for tokenization</li>
- *  <li>information structure annotation via spans</li>
- *  <li>anaphoric relation via pointing relation</li>
- *  <li>syntactic annotations</li>
- * </ol> 
- * This dummy implementation is supposed to give you an impression, of how Pepper works and how you can create
- * your own implementation along that dummy. It further shows some basics of creating a simple Salt model. 
- * <br/>
- * <strong>This code contains a lot of TODO's. Please have a look at them and adapt the code for your needs
- * </strong>
- * At least, a list of not used but helpful methods:
- * <ul>
- *  <li>the salt model to fill can be accessed via {@link #getSaltProject()}</li>
- * 	<li>customization properties can be accessed via {@link #getProperties()}</li>
- *  <li>a place where resources of this bundle are, can be accessed via {@link #getResources()}</li>
- * </ul>
- * If this is the first time, you are implementing a Pepper module, we strongly recommend, to take a look into the
- * 'Developer's Guide for Pepper modules', you will find on <a href="https://korpling.german.hu-berlin.de/saltnpepper/">https://korpling.german.hu-berlin.de/saltnpepper/</a>.
- * @author Florian Zipser
+ * @author Vivian Voigt
  * @version 1.0
  *
  */
