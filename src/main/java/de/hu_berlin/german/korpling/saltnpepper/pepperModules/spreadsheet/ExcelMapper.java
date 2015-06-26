@@ -1,11 +1,23 @@
 package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperMapper;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.common.DOCUMENT_STATUS;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.impl.PepperMapperImpl;
 import de.hu_berlin.german.korpling.saltnpepper.salt.SaltFactory;
@@ -15,6 +27,7 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructu
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructure.STYPE_NAME;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructure.STextualDS;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructure.SToken;
+
 
 /**
  * This class is a dummy implementation for a mapper, to show how it works. This  sample mapper 
@@ -26,7 +39,7 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sDocumentStructu
  * @author Florian Zipser
  *
  */
-public class ExcelMapper extends PepperMapperImpl{
+public class ExcelMapper extends PepperMapperImpl implements PepperMapper{
 	/**
 	 * 
 	 */
@@ -80,6 +93,49 @@ public class ExcelMapper extends PepperMapperImpl{
 		
 		//we record, which file currently is imported to the debug stream, in this dummy implementation the resource is null 
 		logger.debug("Importing the file {}.", resource);
+		
+		logger.info(resource.toString());
+		
+		try {
+			File xlsxFile = new File(resource.path());
+			InputStream xlsxFileStream = new FileInputStream(xlsxFile);
+			XSSFWorkbook xlsxWorkbook = new XSSFWorkbook(xlsxFileStream);
+//			
+//			XSSFSheet xlsxSheet = xlsxWorkbook.getSheetAt(0);
+//			XSSFRow row;
+//			XSSFCell cell;
+//			String primaryText2 = "";
+//			
+//			Iterator rows = xlsxSheet.rowIterator();
+//			while (rows.hasNext())
+//			{
+//				row=(XSSFRow) rows.next();
+//				Iterator cells = row.cellIterator();
+//				while (cells.hasNext())
+//				{
+//					cell=(XSSFCell) cells.next();
+//			
+//					if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING)
+//					{
+//						primaryText2.concat(cell.getStringCellValue()+" ");
+//					}
+//					else if(cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC)
+//					{
+//						primaryText2.concat(cell.getNumericCellValue()+" \n");
+//					}
+//					else
+//					{
+//						//U Can Handel Boolean, Formula, Errors
+//					}
+//				}
+//				logger.info(primaryText2);
+//			}
+
+			
+		} catch ( IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/**
 		 * STEP 1:

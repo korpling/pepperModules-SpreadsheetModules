@@ -17,6 +17,10 @@
  */
 package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.common.util.URI;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -77,6 +81,23 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 	// this is a logger, for recording messages during program process, like debug messages
 	private static final Logger logger= LoggerFactory.getLogger(ExcelImporter.class);
 	
+	// hard-coded string set of TextualDS layer
+	// TODO: replace this with a function that imports TextualDS-layer names from a config file
+	String[] ridgesTextLayer = {"dipl", "clean", "norm"};
+	
+	// create a set of layer that shall be interpreted as TextualDS
+	Set<String> textSet = new HashSet<String>(Arrays.asList(ridgesTextLayer));
+		
+	public Set<String> getTextSet() {
+		return textSet;
+	}
+
+
+	public void setTextSet(Set<String> textSet) {
+		this.textSet = textSet;
+	}
+
+
 	/**
 	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
 	 * <br/>
@@ -144,4 +165,5 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 		//TODO make some initializations if necessary
 		return(super.isReadyToStart());
 	}
+
 }
