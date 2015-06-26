@@ -100,7 +100,7 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 	 */
 	@Override
 	public PepperMapper createPepperMapper(SElementId sElementId){
-		ExcelMapper mapper= new ExcelMapper(this);
+		ExcelMapper mapper= new ExcelMapper();
 		
 		mapper.setResourceURI(getSElementId2ResourceTable().get(sElementId));
 		return(mapper);
