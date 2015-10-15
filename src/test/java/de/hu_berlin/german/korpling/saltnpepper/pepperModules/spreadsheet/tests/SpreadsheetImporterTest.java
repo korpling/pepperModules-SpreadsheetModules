@@ -17,23 +17,15 @@
  */
 package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.emf.common.util.URI;
 import org.junit.Before;
-import org.junit.Test;
 
-import de.hu_berlin.german.korpling.saltnpepper.pepper.common.CorpusDesc;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.common.FormatDesc;
 import de.hu_berlin.german.korpling.saltnpepper.pepper.testFramework.PepperImporterTest;
-import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.ExcelImporter;
-import de.hu_berlin.german.korpling.saltnpepper.salt.SaltFactory;
-import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SCorpus;
-import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SDocument;
+import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.SpreadsheetImporter;
 
 /**
- * This is a dummy implementation of a JUnit test for testing the {@link ExcelImporter} class.
+ * This is a dummy implementation of a JUnit test for testing the {@link SpreadsheetImporter} class.
  * Feel free to adapt and enhance this test class for real tests to check the work of your importer.
  * If you are not confirm with JUnit, please have a look at <a href="http://www.vogella.com/tutorials/JUnit/article.html">
  * http://www.vogella.com/tutorials/JUnit/article.html</a>.
@@ -43,7 +35,7 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure
  * @author Florian Zipser
  *
  */
-public class ExcelImporterTest extends PepperImporterTest{
+public class SpreadsheetImporterTest extends PepperImporterTest{
 	/**
 	 * This method is called by the JUnit environment each time before a test case starts. 
 	 * So each time a method annotated with @Test is called. This enables, that each method 
@@ -52,12 +44,12 @@ public class ExcelImporterTest extends PepperImporterTest{
 	 */
 	@Before
 	public void setUp(){
-		setFixture(new ExcelImporter());
+		setFixture(new SpreadsheetImporter());
 		
 		//TODO set the formats to be supported by your importer, so that they can be checked
 		FormatDesc formatDef= new FormatDesc();
-		formatDef.setFormatName("excel");
-		formatDef.setFormatVersion("1.0");
+		formatDef.setFormatName("Excel");
+		formatDef.setFormatVersion("8.0");
 		this.supportedFormatsCheck.add(formatDef);
 	}
 //

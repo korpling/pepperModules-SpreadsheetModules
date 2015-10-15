@@ -41,11 +41,11 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
  * @version 1.0
  *
  */
-@Component(name="ExcelImporterComponent", factory="PepperImporterComponentFactory")
-public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
+@Component(name="SpreadsheetImporterComponent", factory="PepperImporterComponentFactory")
+public class SpreadsheetImporter extends PepperImporterImpl implements PepperImporter{
 // =================================================== mandatory ===================================================
 	// this is a logger, for recording messages during program process, like debug messages
-	private static final Logger logger= LoggerFactory.getLogger(ExcelImporter.class);
+	private static final Logger logger= LoggerFactory.getLogger(SpreadsheetImporter.class);
 	
 	// hard-coded string set of TextualDS layer
 	// TODO: replace this with a function that imports TextualDS-layer names from a config file
@@ -71,10 +71,10 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 	 * The coordinates (modules name, version and supported formats) are a kind of a fingerprint, 
 	 * which should make your module unique.
 	 */
-	public ExcelImporter(){
+	public SpreadsheetImporter(){
 		super();
-		this.setName("ExcelImporter");
-		this.addSupportedFormat("excel", "1.0", null);
+		this.setName("SpreadsheetImporter");
+		this.addSupportedFormat("Excel", "8.0", null);
 		this.getSDocumentEndings().add("xlsx");
 	}
 	
@@ -88,9 +88,9 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 	 * The parameter <code>sElementId</code>, if a {@link PepperMapper} object should be created in case of the object to map is either 
 	 * an {@link SDocument} object or an {@link SCorpus} object of the mapper should be initialized differently. 
 	 * <br/>
-	 * Just to show how the creation of such a mapper works, we here create a sample mapper of type {@link ExcelMapper}, 
-	 * which only produces a fixed document-structure in method  {@link ExcelMapper#mapSDocument()} and enhances the 
-	 * corpora for further meta-annotations in the method {@link ExcelMapper#mapSCorpus()}.
+	 * Just to show how the creation of such a mapper works, we here create a sample mapper of type {@link Spreadsheet2SaltMapper}, 
+	 * which only produces a fixed document-structure in method  {@link Spreadsheet2SaltMapper#mapSDocument()} and enhances the 
+	 * corpora for further meta-annotations in the method {@link Spreadsheet2SaltMapper#mapSCorpus()}.
 	 * <br/>
 	 * If your mapper needs to have set variables, this is the place to do it.
 	 * @param sElementId {@link SElementId} of the {@link SCorpus} or {@link SDocument} to be processed. 
@@ -98,7 +98,7 @@ public class ExcelImporter extends PepperImporterImpl implements PepperImporter{
 	 */
 	@Override
 	public PepperMapper createPepperMapper(SElementId sElementId){
-		ExcelMapper mapper= new ExcelMapper();
+		Spreadsheet2SaltMapper mapper= new Spreadsheet2SaltMapper();
 		
 		mapper.setResourceURI(getSElementId2ResourceTable().get(sElementId));
 		return(mapper);
