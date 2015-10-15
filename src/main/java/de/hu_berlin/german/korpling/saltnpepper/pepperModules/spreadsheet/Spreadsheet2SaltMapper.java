@@ -7,14 +7,13 @@ import java.io.InputStream;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.corpus_tools.pepper.common.DOCUMENT_STATUS;
+import org.corpus_tools.pepper.impl.PepperMapperImpl;
+import org.corpus_tools.pepper.modules.PepperMapper;
+import org.corpus_tools.salt.SaltFactory;
 import org.eclipse.emf.common.util.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.hu_berlin.german.korpling.saltnpepper.pepper.common.DOCUMENT_STATUS;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperMapper;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.impl.PepperMapperImpl;
-import de.hu_berlin.german.korpling.saltnpepper.salt.SaltFactory;
 
 /**
  *  
@@ -39,7 +38,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	@Override
 	public DOCUMENT_STATUS mapSCorpus() {
 		//getScorpus() returns the current corpus object.
-		getSCorpus().createSMetaAnnotation(null, "date", "1989-12-17");
+		getCorpus().createMetaAnnotation(null, "date", "1989-12-17");
 		return(DOCUMENT_STATUS.COMPLETED);
 	}
 	/**
@@ -63,7 +62,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	public DOCUMENT_STATUS mapSDocument() {
 		
 		//the method getSDocument() returns the current document for creating the document-structure
-		getSDocument().setSDocumentGraph(SaltFactory.eINSTANCE.createSDocumentGraph());
+		getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
 		//to get the exact resource, which be processed now, call getResources(), make sure, it was set in createMapper()  
 		URI resource= getResourceURI();
 		

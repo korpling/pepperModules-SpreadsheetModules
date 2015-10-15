@@ -13,14 +13,13 @@ import java.io.PrintWriter;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.corpus_tools.pepper.testFramework.PepperTestUtil;
+import org.corpus_tools.salt.SaltFactory;
 import org.eclipse.emf.common.util.URI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperModuleProperty;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.testFramework.PepperTestUtil;
-import de.hu_berlin.german.korpling.saltnpepper.salt.SaltFactory;
 import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.Spreadsheet2SaltMapper;
 import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.SpreadsheetImporterProperties;
 
@@ -46,9 +45,9 @@ public class Spreadsheet2SaltMapperTest {
 		File testFile = new File(inputFile);
 		outFile = new FileOutputStream(testFile);
 		setFixture(new Spreadsheet2SaltMapper());
-		getFixture().setSDocument(SaltFactory.eINSTANCE.createSDocument());
-		getFixture().getSDocument().setSDocumentGraph(SaltFactory.eINSTANCE.createSDocumentGraph());
-		getFixture().getSDocument().setSName("sample");
+		getFixture().setDocument(SaltFactory.createSDocument());
+		getFixture().getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
+		getFixture().getDocument().setName("sample");
 		getFixture().setProperties(new SpreadsheetImporterProperties());
 	}
 
@@ -86,8 +85,8 @@ public class Spreadsheet2SaltMapperTest {
 
 		start(getFixture(), outStream.toString());
 
-		assertEquals(1, getFixture().getSDocument().getSDocumentGraph().getSTextualDSs().size());
-		assertNotNull(getFixture().getSDocument().getSDocumentGraph().getSTextualDSs().get(0));
-		assertEquals("", getFixture().getSDocument().getSDocumentGraph().getSTextualDSs().get(0).getSText());
+		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTextualDSs().size());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getTextualDSs().get(0));
+		assertEquals("", getFixture().getDocument().getDocumentGraph().getTextualDSs().get(0).getText());
 	}
 }

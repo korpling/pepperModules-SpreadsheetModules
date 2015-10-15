@@ -1,15 +1,11 @@
 package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
 
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperModuleProperty;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperModuleProperties;
+import org.corpus_tools.pepper.modules.PepperModuleProperties;
+import org.corpus_tools.pepper.modules.PepperModuleProperty;
 
+@SuppressWarnings("serial")
 public class SpreadsheetImporterProperties extends PepperModuleProperties {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8391392383996223913L;
-	
 	public static final String PROP_CONCATENATE_TEXT = "concatenateText";
 
 	public SpreadsheetImporterProperties() {

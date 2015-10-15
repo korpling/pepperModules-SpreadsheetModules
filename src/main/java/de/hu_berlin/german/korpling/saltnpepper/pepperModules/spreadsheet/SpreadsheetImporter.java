@@ -21,20 +21,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.corpus_tools.pepper.common.PepperConfiguration;
+import org.corpus_tools.pepper.impl.PepperImporterImpl;
+import org.corpus_tools.pepper.modules.PepperImporter;
+import org.corpus_tools.pepper.modules.PepperMapper;
+import org.corpus_tools.pepper.modules.PepperModule;
+import org.corpus_tools.pepper.modules.PepperModuleProperties;
+import org.corpus_tools.pepper.modules.exceptions.PepperModuleNotReadyException;
+import org.corpus_tools.salt.common.SCorpus;
+import org.corpus_tools.salt.common.SDocument;
+import org.corpus_tools.salt.graph.Identifier;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperImporter;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperMapper;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperModule;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.PepperModuleProperties;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.exceptions.PepperModuleNotReadyException;
-import de.hu_berlin.german.korpling.saltnpepper.pepper.modules.impl.PepperImporterImpl;
-import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SCorpus;
-import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SDocument;
-import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
 
 /**
  * @author Vivian Voigt
@@ -44,8 +44,10 @@ import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
 @Component(name="SpreadsheetImporterComponent", factory="PepperImporterComponentFactory")
 public class SpreadsheetImporter extends PepperImporterImpl implements PepperImporter{
 // =================================================== mandatory ===================================================
+	public static final String MODULE_NAME="SpreadsheetImporter";
+	
 	// this is a logger, for recording messages during program process, like debug messages
-	private static final Logger logger= LoggerFactory.getLogger(SpreadsheetImporter.class);
+	private static final Logger logger= LoggerFactory.getLogger(MODULE_NAME);
 	
 	// hard-coded string set of TextualDS layer
 	// TODO: replace this with a function that imports TextualDS-layer names from a config file
@@ -73,9 +75,11 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	 */
 	public SpreadsheetImporter(){
 		super();
-		this.setName("SpreadsheetImporter");
-		this.addSupportedFormat("Excel", "8.0", null);
-		this.getSDocumentEndings().add("xlsx");
+		setSupplierContact(URI.createFileURI(PepperConfiguration.EMAIL));
+		setSupplierHomepage(URI.createFileURI("https://github.com/korpling/pepperModules-SpreadsheetModules"));
+		setName("SpreadsheetImporter");
+		addSupportedFormat("Excel", "8.0", null);
+		getDocumentEndings().add("xlsx");
 	}
 	
 	
@@ -83,9 +87,9 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
 	 * <br/>
 	 * This method creates a customized {@link PepperMapper} object and returns it. You can here do some additional initialisations. 
-	 * Thinks like setting the {@link SElementId} of the {@link SDocument} or {@link SCorpus} object and the {@link URI} resource is done
+	 * Thinks like setting the {@link Identifier} of the {@link SDocument} or {@link SCorpus} object and the {@link URI} resource is done
 	 * by the framework (or more in detail in method {@link #start()}).<br/> 
-	 * The parameter <code>sElementId</code>, if a {@link PepperMapper} object should be created in case of the object to map is either 
+	 * The parameter <code>Identifier</code>, if a {@link PepperMapper} object should be created in case of the object to map is either 
 	 * an {@link SDocument} object or an {@link SCorpus} object of the mapper should be initialized differently. 
 	 * <br/>
 	 * Just to show how the creation of such a mapper works, we here create a sample mapper of type {@link Spreadsheet2SaltMapper}, 
@@ -93,14 +97,14 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	 * corpora for further meta-annotations in the method {@link Spreadsheet2SaltMapper#mapSCorpus()}.
 	 * <br/>
 	 * If your mapper needs to have set variables, this is the place to do it.
-	 * @param sElementId {@link SElementId} of the {@link SCorpus} or {@link SDocument} to be processed. 
-	 * @return {@link PepperMapper} object to do the mapping task for object connected to given {@link SElementId}
+	 * @param Identifier {@link Identifier} of the {@link SCorpus} or {@link SDocument} to be processed. 
+	 * @return {@link PepperMapper} object to do the mapping task for object connected to given {@link Identifier}
 	 */
 	@Override
-	public PepperMapper createPepperMapper(SElementId sElementId){
+	public PepperMapper createPepperMapper(Identifier Identifier){
 		Spreadsheet2SaltMapper mapper= new Spreadsheet2SaltMapper();
 		
-		mapper.setResourceURI(getSElementId2ResourceTable().get(sElementId));
+		mapper.setResourceURI(getIdentifier2ResourceTable().get(Identifier));
 		return(mapper);
 	}
 	
