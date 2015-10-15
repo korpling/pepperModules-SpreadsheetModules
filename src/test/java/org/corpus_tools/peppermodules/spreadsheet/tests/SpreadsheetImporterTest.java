@@ -15,14 +15,13 @@
  *
  *
  */
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.tests;
+package org.corpus_tools.peppermodules.spreadsheet.tests;
 
 
 import org.corpus_tools.pepper.common.FormatDesc;
 import org.corpus_tools.pepper.testFramework.PepperImporterTest;
+import org.corpus_tools.peppermodules.spreadsheet.SpreadsheetImporter;
 import org.junit.Before;
-
-import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.SpreadsheetImporter;
 
 /**
  * This is a dummy implementation of a JUnit test for testing the {@link SpreadsheetImporter} class.

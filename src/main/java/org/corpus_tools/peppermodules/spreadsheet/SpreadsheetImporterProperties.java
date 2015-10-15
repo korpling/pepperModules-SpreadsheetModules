@@ -1,4 +1,4 @@
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
+package org.corpus_tools.peppermodules.spreadsheet;
 
 import org.corpus_tools.pepper.modules.PepperModuleProperties;
 import org.corpus_tools.pepper.modules.PepperModuleProperty;

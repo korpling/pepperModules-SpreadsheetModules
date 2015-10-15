@@ -1,4 +1,4 @@
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
+package org.corpus_tools.peppermodules.spreadsheet;
 
 import java.io.File;
 import java.io.FileInputStream;

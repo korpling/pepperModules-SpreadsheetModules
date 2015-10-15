@@ -15,7 +15,7 @@
  *
  *
  */
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet;
+package org.corpus_tools.peppermodules.spreadsheet;
 
 import java.util.Arrays;
 import java.util.HashSet;

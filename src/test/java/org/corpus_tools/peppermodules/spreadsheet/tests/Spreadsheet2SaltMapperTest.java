@@ -1,4 +1,4 @@
-package de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.tests;
+package org.corpus_tools.peppermodules.spreadsheet.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,14 +14,13 @@ import java.io.PrintWriter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.corpus_tools.pepper.testFramework.PepperTestUtil;
+import org.corpus_tools.peppermodules.spreadsheet.Spreadsheet2SaltMapper;
+import org.corpus_tools.peppermodules.spreadsheet.SpreadsheetImporterProperties;
 import org.corpus_tools.salt.SaltFactory;
 import org.eclipse.emf.common.util.URI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.Spreadsheet2SaltMapper;
-import de.hu_berlin.german.korpling.saltnpepper.pepperModules.spreadsheet.SpreadsheetImporterProperties;
 
 public class Spreadsheet2SaltMapperTest {
 	
