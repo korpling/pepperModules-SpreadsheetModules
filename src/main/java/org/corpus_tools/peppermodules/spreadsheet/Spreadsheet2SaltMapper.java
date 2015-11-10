@@ -4,100 +4,159 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.corpus_tools.pepper.common.DOCUMENT_STATUS;
 import org.corpus_tools.pepper.impl.PepperMapperImpl;
 import org.corpus_tools.pepper.modules.PepperMapper;
 import org.corpus_tools.salt.SaltFactory;
+import org.corpus_tools.salt.common.STextualDS;
+import org.corpus_tools.salt.common.SToken;
 import org.eclipse.emf.common.util.URI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- *  
+ * 
  * @author Vivian Voigt
  *
  */
-public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMapper{
-	/**
-	 * 
-	 */
-	private static final Logger logger= LoggerFactory.getLogger(Spreadsheet2SaltMapper.class);
-	
-	/**
-	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
-	 * <br/>
-	 * If you need to make any adaptations to the corpora like adding further meta-annotation, do it here.
-	 * When whatever you have done successful, return the status {@link DOCUMENT_STATUS#COMPLETED}. If anything
-	 * went wrong return the status {@link DOCUMENT_STATUS#FAILED}.
-	 * <br/>
-	 * In our dummy implementation, we just add a creation date to each corpus. 
-	 */
-	@Override
-	public DOCUMENT_STATUS mapSCorpus() {
-		//getScorpus() returns the current corpus object.
-		getCorpus().createMetaAnnotation(null, "date", "1989-12-17");
-		return(DOCUMENT_STATUS.COMPLETED);
+public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
+		PepperMapper {
+
+	public SpreadsheetImporterProperties getProps() {
+		return ((SpreadsheetImporterProperties) this.getProperties());
 	}
-	/**
-	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
-	 * <br/>
-	 * This is the place for the real work. Here you have to do anything necessary, to map a corpus to Salt.
-	 * These could be things like: reading a file, mapping the content, closing the file, cleaning up and so on.
-	 * <br/>
-	 * In our dummy implementation, we do not read a file, for not making the code too complex. We just show how
-	 * to create a simple document-structure in Salt, in following steps:
-	 * <ol>
-	 * 	<li>creating primary data</li>
-	 *  <li>creating tokenization</li>
-	 *  <li>creating part-of-speech annotation for tokenization</li>
-	 *  <li>creating information structure annotation via spans</li>
-	 *  <li>creating anaphoric relation via pointing relation</li>
-	 *  <li>creating syntactic annotations</li>
-	 * </ol>
-	 */
+
 	@Override
 	public DOCUMENT_STATUS mapSDocument() {
-		
-		//the method getSDocument() returns the current document for creating the document-structure
-		getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
-		//to get the exact resource, which be processed now, call getResources(), make sure, it was set in createMapper()  
-		URI resource= getResourceURI();
-		
-		//we record, which file currently is imported to the debug stream, in this dummy implementation the resource is null 
-		logger.debug("Importing the file {}.", resource);
-		
-		logger.info(resource.toString());
-		
-		try {
-			File xlsxFile = new File(resource.path());
-			InputStream xlsxFileStream = new FileInputStream(xlsxFile);
-			XSSFWorkbook xlsxWorkbook = new XSSFWorkbook(xlsxFileStream);
-			XSSFSheet sheet = xlsxWorkbook.getSheetAt(0);
-			System.out.println(sheet.getRow(0).getCell(0).toString());
-			
 
-			xlsxWorkbook.close();
-		} catch ( IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		/**
-		 * STEP 1:
-		 * we create the primary data and hold a reference on the primary data object
-		 */
-	
-		//we add a progress to notify the user about the process status (this is very helpful, especially for longer taking processes)
-	
-		//now we are done and return the status that everything was successful
-		return(DOCUMENT_STATUS.COMPLETED);
+		URI resourceURI = getResourceURI();
+		String resource = resourceURI.path();
+		readSpreadsheetResource(resource);
+
+		return (DOCUMENT_STATUS.COMPLETED);
 	}
-	public void setProperties(
-			SpreadsheetImporterProperties spreadsheetImporterProperties) {
-		// TODO Auto-generated method stub
-		
-	}	
+
+//	private StringBuilder currentText = new StringBuilder();
+	
+	STextualDS primaryText = null;
+	// save all tokens of the current primary text
+	List<SToken> currentTokList = new ArrayList<SToken>();
+
+	private void readSpreadsheetResource(String resource) {
+
+		// String primaryTextLayer = getProps().getPrimaryText();
+		String primaryTextLayer = "tok";
+		List<String> primaryTextLayerList = Arrays.asList(primaryTextLayer
+				.split("\\s*,\\s*"));
+
+		getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
+
+		SpreadsheetImporter.logger.debug("Importing the file {}.", resource);
+
+		SpreadsheetImporter.logger.info(resource);
+		InputStream xlsxFileStream;
+		File xlsxFile;
+		Workbook workbook = null;
+		primaryText = getDocument().getDocumentGraph().createTextualDS("");
+
+		try {
+			xlsxFile = new File(resource);
+			xlsxFileStream = new FileInputStream(xlsxFile);
+			workbook = WorkbookFactory.create(xlsxFileStream);
+			workbook.close();
+		} catch (IOException | EncryptedDocumentException
+				| InvalidFormatException e) {
+			SpreadsheetImporter.logger.warn("Could not open file '" + resource
+					+ "'.");
+		}
+
+		if (workbook != null) {
+
+			int sheetNum = workbook.getNumberOfSheets();
+
+			for (int currSheet = 0; currSheet < sheetNum; currSheet++) {
+				Sheet sheet = workbook.getSheetAt(currSheet);
+				// get the sheet holding the actual corpus data
+				if (sheet.getSheetName().equals(getProps().getCorpusSheet())) {
+					int rowNum = sheet.getLastRowNum();
+
+					// get all names of the annotation layer (first row)
+					Row headerRow = sheet.getRow(0);
+					int columnNum = 0;
+					if (headerRow != null) {
+						columnNum = headerRow.getLastCellNum();
+					}
+
+					// iterate through all layers and save all layers
+					// that hold the primary data
+					List<Integer> primTextPos = new ArrayList<Integer>();
+					for (int currCol = 0; currCol < columnNum; currCol++) {
+						if (headerRow.getCell(currCol) != null) {
+							if (primaryTextLayerList.contains(headerRow
+									.getCell(currCol).toString())) {
+								primTextPos.add(currCol);
+							}
+						}
+					}
+
+					String text = "";
+					if (primTextPos != null) {
+
+						int offset = primaryText.getText().length();
+
+						for (int primText : primTextPos) {
+							for (int currRow = 1; currRow <= rowNum; currRow++) {
+								Row row = sheet.getRow(currRow);
+
+								if (row != null
+										&& row.getCell(primText) != null) {
+									Cell primCell = row.getCell(primText);
+
+									text = primCell.toString();
+									int start = offset;
+									int end = start + text.length();
+									offset += text.length();
+
+									getDocument().getDocumentGraph()
+											.createToken(primaryText, start,
+													end);
+
+									// insert space between tokens
+									if (currRow != rowNum
+											|| primTextPos.indexOf(primText) != primTextPos
+													.get(primTextPos.size() - 1)) {
+										text += " ";
+										offset++;
+									}
+
+									// TODO: delete debug print
+									System.out.println(primCell.toString());
+
+									primaryText.setText(primaryText.getText()
+											+ text);
+								}
+								getDocument().getDocumentGraph().addNode(
+										primaryText);
+							}
+
+						}
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
 }

@@ -46,10 +46,14 @@ public class SpreadsheetImporterTest extends PepperImporterTest{
 		setFixture(new SpreadsheetImporter());
 		
 		//TODO set the formats to be supported by your importer, so that they can be checked
-		FormatDesc formatDef= new FormatDesc();
-		formatDef.setFormatName("Excel");
-		formatDef.setFormatVersion("8.0");
-		this.supportedFormatsCheck.add(formatDef);
+		FormatDesc xlsFormat= new FormatDesc();
+		FormatDesc xlsxFormat= new FormatDesc();
+		xlsFormat.setFormatName("xls");
+		xlsFormat.setFormatVersion("97-2008");
+		this.supportedFormatsCheck.add(xlsFormat);
+		xlsxFormat.setFormatName("xlsx");
+		xlsxFormat.setFormatVersion("2007+");
+		supportedFormatsCheck.add(xlsxFormat);
 	}
 //
 //	/**

@@ -47,7 +47,7 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	public static final String MODULE_NAME="SpreadsheetImporter";
 	
 	// this is a logger, for recording messages during program process, like debug messages
-	private static final Logger logger= LoggerFactory.getLogger(MODULE_NAME);
+	static final Logger logger= LoggerFactory.getLogger(MODULE_NAME);
 	
 	// hard-coded string set of TextualDS layer
 	// TODO: replace this with a function that imports TextualDS-layer names from a config file
@@ -76,10 +76,12 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	public SpreadsheetImporter(){
 		super();
 		setSupplierContact(URI.createFileURI(PepperConfiguration.EMAIL));
-		setSupplierHomepage(URI.createFileURI("https://github.com/korpling/pepperModules-SpreadsheetModules"));
+		setSupplierHomepage(URI.createFileURI(PepperConfiguration.HOMEPAGE));
 		setName("SpreadsheetImporter");
-		addSupportedFormat("Excel", "8.0", null);
+		addSupportedFormat("xls", "97-2008", null);
+		addSupportedFormat("xlsx", "2007+", null);
 		getDocumentEndings().add("xlsx");
+		getDocumentEndings().add("xls");
 	}
 	
 	
@@ -101,11 +103,13 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	 * @return {@link PepperMapper} object to do the mapping task for object connected to given {@link Identifier}
 	 */
 	@Override
-	public PepperMapper createPepperMapper(Identifier Identifier){
+	public PepperMapper createPepperMapper(Identifier identifier){
 		Spreadsheet2SaltMapper mapper= new Spreadsheet2SaltMapper();
-		
-		mapper.setResourceURI(getIdentifier2ResourceTable().get(Identifier));
-		return(mapper);
+		if (identifier.getIdentifiableElement() != null && identifier.getIdentifiableElement() instanceof SDocument) {
+			URI resource = getIdentifier2ResourceTable().get(identifier);
+			mapper.setResourceURI(resource);
+		}
+		return mapper;
 	}
 	
 	/**
