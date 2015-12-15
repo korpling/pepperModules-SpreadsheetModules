@@ -17,10 +17,6 @@
  */
 package org.corpus_tools.peppermodules.spreadsheet;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.corpus_tools.pepper.common.PepperConfiguration;
 import org.corpus_tools.pepper.impl.PepperImporterImpl;
 import org.corpus_tools.pepper.modules.PepperImporter;
@@ -49,23 +45,6 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	// this is a logger, for recording messages during program process, like debug messages
 	static final Logger logger= LoggerFactory.getLogger(MODULE_NAME);
 	
-	// hard-coded string set of TextualDS layer
-	// TODO: replace this with a function that imports TextualDS-layer names from a config file
-	String[] ridgesTextLayer = {"dipl", "clean", "norm"};
-	
-	// create a set of layer that shall be interpreted as TextualDS
-	Set<String> textSet = new HashSet<String>(Arrays.asList(ridgesTextLayer));
-		
-	public Set<String> getTextSet() {
-		return textSet;
-	}
-
-
-	public void setTextSet(Set<String> textSet) {
-		this.textSet = textSet;
-	}
-
-
 	/**
 	 * <strong>OVERRIDE THIS METHOD FOR CUSTOMIZATION</strong>
 	 * <br/>
@@ -77,11 +56,12 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 		super();
 		setSupplierContact(URI.createFileURI(PepperConfiguration.EMAIL));
 		setSupplierHomepage(URI.createFileURI(PepperConfiguration.HOMEPAGE));
-		setName("SpreadsheetImporter");
+		setName(MODULE_NAME);
 		addSupportedFormat("xls", "97-2008", null);
 		addSupportedFormat("xlsx", "2007+", null);
 		getDocumentEndings().add("xlsx");
 		getDocumentEndings().add("xls");
+		this.setProperties(new SpreadsheetImporterProperties());
 	}
 	
 	

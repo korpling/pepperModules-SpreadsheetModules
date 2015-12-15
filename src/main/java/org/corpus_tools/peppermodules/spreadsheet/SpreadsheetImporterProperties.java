@@ -13,11 +13,13 @@ public class SpreadsheetImporterProperties extends PepperModuleProperties {
 	public static final String PROP_CONCATENATE_TEXT = "concatenateText";
 	public static final String PROP_PRIMARY_TEXT = "primText";
 	public static final String PROP_CORPUS_SHEET = "corpusSheet";
+	public static final String PROP_ANNO_REFERS_TO = "annoPrimRel";
 
 	public SpreadsheetImporterProperties() {
-		addProperty(new PepperModuleProperty<>(PROP_PRIMARY_TEXT, String.class, "Defines the name of the xml tag that includes the textual data to be used as primary text (key: 'textElement', default value: 'unicode').", "tok"));
+		addProperty(new PepperModuleProperty<>(PROP_PRIMARY_TEXT, String.class, "Defines the name of the column(s), that hold the primary text, this can either be a single column name, or a comma seperated enumeration of column names (key: 'primText', default value: 'tok').", "tok", false));
 		addProperty(new PepperModuleProperty<>(PROP_CORPUS_SHEET, String.class, "Defines the sheet, that holds the actual corpus (key: 'primText', default is 'Tabelle1'). If you allways want to use the first sheet of your spreadsheets independent of the name, type in 'FIRST_SHEET' as a value", "Tabelle1", false));
 		addProperty(new PepperModuleProperty<>(PROP_CONCATENATE_TEXT, Boolean.class, "Defines, if the textual data shall be concatenated or if a new string object shall be created (key: 'concatenateText', default is 'true').", true, false));
+		addProperty(new PepperModuleProperty<>(PROP_ANNO_REFERS_TO, String.class, "Defines which annotation layer refers to which primary text layer, therefor the annotation layer name is followed by the name of the layer, that holds the primary text in square brackets. A possible key-value set could be: key='annoPrimRel', value='anno1[tok1]' (key: 'annoPrimRel', default is 'null').", null, false));
 		}
 
 	public Boolean concatenateText() {
@@ -29,7 +31,10 @@ public class SpreadsheetImporterProperties extends PepperModuleProperties {
 	}
 
 	public String getCorpusSheet() {
-		
 		return (String) getProperty(PROP_CORPUS_SHEET).getValue();
+	}
+	
+	public String getAnnoPrimRel() {
+		return (String) getProperty(PROP_ANNO_REFERS_TO).getValue();
 	}
 }
