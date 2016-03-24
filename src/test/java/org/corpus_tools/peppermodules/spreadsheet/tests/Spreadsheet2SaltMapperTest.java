@@ -322,6 +322,100 @@ public class Spreadsheet2SaltMapperTest {
 		return outStream;
 	}
 	
+	private FileOutputStream createFourthXlsxSample() throws IOException {
+
+		xlsxWb = new XSSFWorkbook();
+		Sheet xlsxSheet = xlsxWb.createSheet("firstSheet");
+		Row xlsxRow1 = xlsxSheet.createRow(0);
+		Cell xlsxCell1 = xlsxRow1.createCell(0);
+		xlsxCell1.setCellValue("tok");
+		Cell xlsxCell2 = xlsxRow1.createCell(1);
+		xlsxCell2.setCellValue("anno1");
+		Cell xlsxCell3 = xlsxRow1.createCell(2);
+		xlsxCell3.setCellValue("tok2");
+		Cell xlsxCell4 = xlsxRow1.createCell(3);
+		xlsxCell4.setCellValue("anno2");
+		Cell xlsxCell5 = xlsxRow1.createCell(4);
+		xlsxCell5.setCellValue("lb");
+
+
+		Row xlsxRow2 = xlsxSheet.createRow(1);
+		Cell xlsxCell21 = xlsxRow2.createCell(0);
+		xlsxCell21.setCellValue("This");
+		Cell xlsxCell22 = xlsxRow2.createCell(1);
+		xlsxCell22.setCellValue("pron1");
+		Cell xlsxCell23 = xlsxRow2.createCell(2);
+		xlsxCell23.setCellValue("This");
+		Cell xlsxCell24 = xlsxRow2.createCell(3);
+		xlsxCell24.setCellValue("pron1");
+		Cell xlsxCell25 = xlsxRow2.createCell(4);
+		xlsxCell25.setCellValue("lb");
+		
+		Row xlsxRow3 = xlsxSheet.createRow(2);
+		Cell xlsxCell31 = xlsxRow3.createCell(0);
+		xlsxCell31.setCellValue("is");
+		Cell xlsxCell32 = xlsxRow3.createCell(1);
+		xlsxCell32.setCellValue("verb1");
+		Cell xlsxCell33 = xlsxRow3.createCell(2);
+		xlsxCell33.setCellValue("is");
+		Cell xlsxCell34 = xlsxRow3.createCell(3);
+		xlsxCell34.setCellValue("verb1");
+		xlsxRow3.createCell(4);
+
+		Row xlsxRow4 = xlsxSheet.createRow(3);
+		Cell xlsxCell41 = xlsxRow4.createCell(0);
+		xlsxCell41.setCellValue("an");
+		Cell xlsxCell42 = xlsxRow4.createCell(1);
+		xlsxCell42.setCellValue("art1");
+		Cell xlsxCell43 = xlsxRow4.createCell(2);
+		xlsxCell43.setCellValue("an");
+		Cell xlsxCell44 = xlsxRow4.createCell(3);
+		xlsxCell44.setCellValue("art1");
+		xlsxRow4.createCell(4);
+
+		Row xlsRow5 = xlsxSheet.createRow(4);
+		Cell xlsCell51 = xlsRow5.createCell(0);
+		xlsCell51.setCellValue("ex-Fucking-ample");
+		Cell xlsCell52 = xlsRow5.createCell(1);
+		xlsCell52.setCellValue("noun1");
+		Cell xlsCell53 = xlsRow5.createCell(2);
+		xlsCell53.setCellValue("ex-");
+		Cell xlsCell54 = xlsRow5.createCell(3);
+		xlsCell54.setCellValue("noun1");
+		xlsRow5.createCell(4);
+
+		Row xlsxRow6 = xlsxSheet.createRow(5);
+		xlsxRow6.createCell(0);
+		xlsxRow6.createCell(1);
+		Cell xlsxCell63 = xlsxRow6.createCell(2);
+		xlsxCell63.setCellValue("ample");
+		xlsxRow6.createCell(3);
+		CellRangeAddress mergedPrim = new CellRangeAddress(4, 5, 0, 0);
+		xlsxSheet.addMergedRegion(mergedPrim);
+		CellRangeAddress mergedAnno1 = new CellRangeAddress(4, 5, 1, 1);
+		xlsxSheet.addMergedRegion(mergedAnno1);
+		CellRangeAddress mergedAnno2 = new CellRangeAddress(4, 5, 3, 3);
+		xlsxSheet.addMergedRegion(mergedAnno2);
+		xlsxRow6.createCell(4);
+		
+		Row xlsxRow7 = xlsxSheet.createRow(6);
+		Cell xlsxCell71 = xlsxRow7.createCell(0);
+		xlsxCell71.setCellValue(".");
+		Cell xlsxCell72 = xlsxRow7.createCell(1);
+		xlsxCell72.setCellValue("punct1");
+		Cell xlsxCell73 = xlsxRow7.createCell(2);
+		xlsxCell73.setCellValue(".");
+		Cell xlsxCell74 = xlsxRow7.createCell(3);
+		xlsxCell74.setCellValue("punct1");
+		xlsxRow7.createCell(4);
+		CellRangeAddress mergedAnnoLb = new CellRangeAddress(1, 6, 4, 4);
+		xlsxSheet.addMergedRegion(mergedAnnoLb);
+
+		xlsxWb.write(outStream);
+
+		return outStream;
+	}
+	
 	private void start(Spreadsheet2SaltMapper mapper, String xlsString)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
@@ -444,12 +538,16 @@ public class Spreadsheet2SaltMapperTest {
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok, tok2");
 		start(getFixture(), outStream.toString());
-		assertEquals(1, getFixture().getDocument().getDocumentGraph()
+		assertEquals(2, getFixture().getDocument().getDocumentGraph()
 				.getTextualDSs().size());
 		assertNotNull(getFixture().getDocument().getDocumentGraph()
 				.getTextualDSs().get(0));
-		assertEquals("This is an example . This is an ex- ample .", getFixture().getDocument()
+		assertEquals("This is an example .", getFixture().getDocument()
 				.getDocumentGraph().getTextualDSs().get(0).getText());
+		assertNotNull(getFixture().getDocument().getDocumentGraph()
+				.getTextualDSs().get(1));
+		assertEquals("This is an ex- ample .", getFixture().getDocument()
+				.getDocumentGraph().getTextualDSs().get(1).getText());
 	}
 	
 	/**
@@ -463,7 +561,7 @@ public class Spreadsheet2SaltMapperTest {
 	 */
 	@Test
 	public void testMultiplePrimDataSpan() throws ParserConfigurationException, SAXException, IOException, XMLStreamException {
-
+		// TODO: change to a check for correct spanning regarding to associated annotations
 		createSecondXlsxSample();
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
@@ -475,9 +573,21 @@ public class Spreadsheet2SaltMapperTest {
 
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
+		assertEquals("tok" , getFixture().getDocument().getDocumentGraph().getSpans().get(0).getName());
 		assertEquals("This is an example .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
-		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(1));
-		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(1)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
+		assertEquals("tok2" , getFixture().getDocument().getDocumentGraph().getSpans().get(2).getName());
+		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
+		//		assertEquals(11, getFixture().getDocument().getDocumentGraph().getTimelineRelations().size());
+	}
+	
+	@Test
+	public void testMultiplePrimDataOrder() throws IOException {
+		createSecondXlsxSample();
+		((PepperModuleProperty<String>) getFixture().getProperties().getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET)).setValue("firstSheet");
+		((PepperModuleProperty<String>) getFixture().getProperties().getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT)).setValue("tok, tok2");
+		start(getFixture(), outStream.toString());
+		
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());
 		assertEquals(9, getFixture().getDocument().getDocumentGraph().getOrderRelations().size());
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(0), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(0).getSource());
@@ -499,12 +609,12 @@ public class Spreadsheet2SaltMapperTest {
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(9), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getSource());
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(10), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getTarget());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTimeline());
-		assertEquals(11, getFixture().getDocument().getDocumentGraph().getTimelineRelations().size());
+
 	}
 	
 	@Test
 	public void testRenameAnnoNames() throws ParserConfigurationException, SAXException, IOException, XMLStreamException {
-
+		// TODO: check for Spans in relation to their annotations rather than their primary text layers.
 		createThirdXlsxSample();
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
@@ -520,8 +630,8 @@ public class Spreadsheet2SaltMapperTest {
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
 		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
-		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(1));
-		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(1)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
+		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());
 		assertEquals(9, getFixture().getDocument().getDocumentGraph().getOrderRelations().size());
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(0), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(0).getSource());
@@ -543,6 +653,81 @@ public class Spreadsheet2SaltMapperTest {
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(9), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getSource());
 		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(10), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getTarget());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTimeline());
-		assertEquals(11, getFixture().getDocument().getDocumentGraph().getTimelineRelations().size());
+//		assertEquals(11, getFixture().getDocument().getDocumentGraph().getTimelineRelations().size());
 	}
+	
+	@Test
+	public void testAnnotations() throws ParserConfigurationException, SAXException, IOException, XMLStreamException {
+
+		createFourthXlsxSample();
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
+				.setValue("firstSheet");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
+				.setValue("tok, tok2");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
+				.setValue("anno1>anno1[tok], anno2>anno2[tok2], lb>lb[tok]");
+		start(getFixture(), outStream.toString());
+
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(1));
+		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(1)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(3));
+		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(3)));
+//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(0).getAnnotations().size());
+//		assertEquals("pron1", getFixture().getDocument().getDocumentGraph().getTokens().get(0).getAnnotation("anno1").getValue());
+//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getTokens().get(0).getAnnotation("lb").getValue());
+//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(1).getAnnotations().size());
+//		assertEquals("verb1", getFixture().getDocument().getDocumentGraph().getTokens().get(1).getAnnotation("anno1").getValue());
+//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getTokens().get(1).getAnnotation("lb").getValue());
+//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(2).getAnnotations().size());
+//		assertEquals("art1", getFixture().getDocument().getDocumentGraph().getTokens().get(2).getAnnotation("anno1").getValue());
+//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getTokens().get(2).getAnnotation("lb").getValue());
+//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(3).getAnnotations().size());
+//		assertEquals("noun1", getFixture().getDocument().getDocumentGraph().getTokens().get(3).getAnnotation("anno1").getValue());
+//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getTokens().get(3).getAnnotation("lb").getValue());
+//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(4).getAnnotations().size());
+//		assertEquals("punct1", getFixture().getDocument().getDocumentGraph().getTokens().get(4).getAnnotation("anno1").getValue());
+//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getTokens().get(4).getAnnotation("lb").getValue());
+		
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(5).getAnnotations().size());
+//		assertEquals("pron1", getFixture().getDocument().getDocumentGraph().getTokens().get(5).getAnnotation("anno2").getValue());
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(6).getAnnotations().size());
+//		assertEquals("verb1", getFixture().getDocument().getDocumentGraph().getTokens().get(6).getAnnotation("anno2").getValue());
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(7).getAnnotations().size());
+//		assertEquals("art1", getFixture().getDocument().getDocumentGraph().getTokens().get(7).getAnnotation("anno2").getValue());
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(8).getAnnotations().size());
+//		assertEquals("noun1", getFixture().getDocument().getDocumentGraph().getTokens().get(8).getAnnotation("anno2").getValue());
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(9).getAnnotations().size());
+//		assertEquals("noun1", getFixture().getDocument().getDocumentGraph().getTokens().get(9).getAnnotation("anno2").getValue());
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(10).getAnnotations().size());
+//		assertEquals("punct1", getFixture().getDocument().getDocumentGraph().getTokens().get(10).getAnnotation("anno2").getValue());
+
+	}
+	
+//	@Test
+//	public void testSLayer() throws IOException {
+//		createThirdXlsxSample();
+//		((PepperModuleProperty<String>) getFixture().getProperties()
+//				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
+//				.setValue("firstSheet");
+//		((PepperModuleProperty<String>) getFixture().getProperties()
+//				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
+//				.setValue("tok, tok2");
+//		((PepperModuleProperty<String>) getFixture().getProperties()
+//				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
+//				.setValue("anno1>anno1[tok], anno2>anno2[tok2]");
+//		((PepperModuleProperty<String>) getFixture().getProperties()
+//				.getProperty(SpreadsheetImporterProperties.PROP_SET_LAYER))
+//				.setValue("textual>{tok, tok2}, morphologigal>{anno1, anno2}, graphical>{lb}");
+//		start(getFixture(), outStream.toString());
+//
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayers());
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("textual"));
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("morphologigal"));
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("graphical"));
+//		assertEquals(3, getFixture().getDocument().getDocumentGraph().getLayers().size());
+//	}
 }
