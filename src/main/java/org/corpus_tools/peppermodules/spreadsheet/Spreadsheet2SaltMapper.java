@@ -261,11 +261,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					
 					currTok = getDocument().getDocumentGraph().createToken(
 							primaryText, start, end);
-					
-//					TODO: comment out next line
-//					currTok.setName(headerRow.getCell(primText).toString());
-					
-					
+										
 				}
 
 				if (lastTok != null && currTok != null) {
@@ -331,22 +327,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 							getDocument().getDocumentGraph().addLayer(sLayer);
 							sLayer.addNode(tokSpan);
 						}
-//						for (SLayer sLayer : getLayerTierCouples().values()) {
-//							getDocument().getDocumentGraph().addLayer(sLayer);
-//							
-//						}
 					}
 				}
-				
-//				SLayer layer = SaltFactory.createSLayer();
-//				if ((getLayerTierCouples() != null)) {
-//					// if current tier shall be added to a layer
-//					for(Entry<String, SLayer> layerEntry : getLayerTierCouples().entrySet()){
-//						if(headerRow.getCell(primText).toString().equals(layerEntry.getKey())){
-//							layer = layerEntry.getValue();
-//						}
-//					}
-//				}
 				
 								
 				getDocument().getDocumentGraph().addNode(tokSpan);
@@ -388,32 +370,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								} catch (Exception e) {
 									SpreadsheetImporter.logger.error("Segmantation error: The segmantation of the tier \"" + headerRow.getCell(annoTier).toString() + "\" in the document: \"" + getResourceURI().lastSegment() + "\" in line: "+ currAnno +" does not match to its primary text.");
 								}
-//								
+							
 								for (SToken help : helper){
 										sTokens.remove(help);
 								}
 								
 								annoSpan = getDocument().getDocumentGraph().createSpan(sTokens);
-								
-//								String tierName = null;
-//								if ((getLayerTierCouples() != null)) {
-//									// if current tier shall be added to a layer
-//									
-//									for(Entry<String, SLayer> layerEntry : getLayerTierCouples().entrySet()){
-//										tierName = layerEntry.getKey();
-//										if(headerRow.getCell(primText).toString().equals(tierName)){
-//											layer = layerEntry.getValue();
-//										}
-//									}
-//								}
-//								if (layer != null) {
-//									// if current tier shall be added to a layer, than add sSpan
-//									// to SLayer
-//									tokSpan.addLayer(layer);
-//								}
-								//TODO: remove debug print
-//								System.out.println("token: "+ corpusSheet.getRow(currAnno).getCell(primText) +", tokenList: " + sTokens + ", anno: " + annoText);
-								
+
 								if(annoSpan != null && headerRow.getCell(annoTier) != null && !headerRow.getCell(annoTier).toString().equals("")){
 									annoSpan.createAnnotation(null, headerRow.getCell(annoTier).toString(),annoText);
 									annoSpan.setName(headerRow.getCell(annoTier).toString());
@@ -435,17 +398,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 						}
 					}
 				}
-				
-			}
-			// for(int rowIndex = 1; rowIndex <= corpusSheet.getLastRowNum();
-			// rowIndex++){
-			// Row row = corpusSheet.getRow(rowIndex);
-			// if (row != null && row.getCell(column) != null) {
-			// Cell primCell = row.getCell(column);
-			// primText.append(primCell.toString() + " ");
-			// }
-			// }
-	
+			}	
 	}
 	
 
@@ -588,27 +541,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	    return null;
 	  }
 
-//	private Integer getRowOfLastToken(Sheet sheet, int coll) {
-//		int lastRow = sheet.getLastRowNum();
-//		for (int currRow = 1; currRow <= lastRow; currRow++) {
-//			Row row = sheet.getRow(currRow);
-//			if (row == null) {
-//				lastRow = currRow - 1;
-//				break;
-//			}
-//			if (row.getCell(coll) == null
-//					|| (row.getCell(coll).toString().equals("") && isMergedCell(
-//							row.getCell(coll), sheet))) {
-//				lastRow = currRow - 1;
-//				break;
-//			}
-//		}
-//		return lastRow;
-//	}
-
 	private Map<String, SLayer> getLayerTierCouples() {
 		// get all sLayer and the associated annotations
-		// TODO: check for right syntax?
 		String tierLayerCouple = getProps().getLayer();
 //		System.out.println(annoLayerCouple);
 		Map<String, SLayer> annoLayerCoupleMap = new HashMap<>();
@@ -628,11 +562,10 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					tier = tier.replace("{", "");
 					tier = tier.replace("}", "");
 					annoLayerCoupleMap.put(tier, sLayer);
-
-//					 System.out.println(sLayer.getName() + ": " + anno);
 				}
 			}
 		}
+		// TODO: throw an exception, if the syntax of the property is false
 //		else {
 //			throw new PepperModuleException(
 //				"Cannot import the given data, because the property file contains a corrupt value for property '"
@@ -682,27 +615,4 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		}
 	}
 	
-	
-//	private int getLastRowOfCorpus(Workbook workbook) {
-//		return 0;
-//		
-//	}
-
-	// private void setAnnotations(SSpan tokSpan){
-	// for (int currRow = 1; currRow <= rowNum; currRow++) {
-	// Row row = sheet.getRow(currRow);
-	//
-	// if (row != null
-	// && row.getCell(primText) != null) {
-	// Cell primCell = row.getCell(primText);
-	// }
-	// }
-	// }
-
-	// TODO: add function to check for every token, if the associated
-	// annotations are merged cells -> if not: add annotation to token,
-	// otherwise find the last cell of the merged cells, on token layer, check
-	// if line = line of last cell -> create a span of all token between start
-	// and end point and add annotation to the span.
-
 }
