@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -21,11 +19,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.NumberToTextConverter;
 import org.corpus_tools.pepper.common.DOCUMENT_STATUS;
 import org.corpus_tools.pepper.impl.PepperMapperImpl;
 import org.corpus_tools.pepper.modules.PepperMapper;
-import org.corpus_tools.pepper.modules.exceptions.PepperModuleException;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocumentGraph;
@@ -77,7 +73,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	// maybe use the StringBuilder
 	private StringBuilder currentText = new StringBuilder();
 
-	private Map<String, SLayer> sLayerMap = null;
 	
 	STimeline timeline = SaltFactory.createSTimeline();
 	
@@ -256,7 +251,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				Cell primCell = row.getCell(primText);
 				SToken currTok = null;
 
-				if (primCell != null && !(primCell.toString().equals("") && isMergedCell(primCell, corpusSheet))) {
+				if (primCell != null && !primCell.toString().equals("")) {
 					    text = formatter.formatCellValue(primCell);
 					
 					int start = offset;
@@ -277,6 +272,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					SOrderRelation primTextOrder = SaltFactory
 							.createSOrderRelation();
 					primTextOrder.setType(headerRow.getCell(primText).toString());
+					
 					primTextOrder.setSource(lastTok);
 					primTextOrder.setTarget(currTok);
 					getDocument().getDocumentGraph().addRelation(primTextOrder);
@@ -327,30 +323,34 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 						currentTokList);
 				tokSpan.setName(headerRow.getCell(primText).toString());
 				
-				SLayer layer = SaltFactory.createSLayer();
-				if ((getLayerTierCouples() != null)) {
-					// if current tier shall be added to a layer
-					for(Entry<String, SLayer> layerEntry : getLayerTierCouples().entrySet()){
-						if(headerRow.getCell(primText).toString().equals(layerEntry.getKey())){
-							layer = layerEntry.getValue();
+				if(getProps().getLayer() != null){
+					
+					if (getLayerTierCouples().size() > 0) {
+						if(getLayerTierCouples().get(tokSpan.getName()) != null){
+							SLayer sLayer = getLayerTierCouples().get(tokSpan.getName());
+							getDocument().getDocumentGraph().addLayer(sLayer);
+							sLayer.addNode(tokSpan);
 						}
+//						for (SLayer sLayer : getLayerTierCouples().values()) {
+//							getDocument().getDocumentGraph().addLayer(sLayer);
+//							
+//						}
 					}
-				}
-				if (layer != null) {
-					// if current tier shall be added to a layer, than add sSpan
-					// to SLayer
-					tokSpan.addLayer(layer);
 				}
 				
+//				SLayer layer = SaltFactory.createSLayer();
+//				if ((getLayerTierCouples() != null)) {
+//					// if current tier shall be added to a layer
+//					for(Entry<String, SLayer> layerEntry : getLayerTierCouples().entrySet()){
+//						if(headerRow.getCell(primText).toString().equals(layerEntry.getKey())){
+//							layer = layerEntry.getValue();
+//						}
+//					}
+//				}
+				
+								
 				getDocument().getDocumentGraph().addNode(tokSpan);
-				if(getProps().getLayer() != null){
-					getLayerTierCouples();
-					if (getLayerTierCouples().size() > 0) {
-						for (SLayer sLayer : getLayerTierCouples().values()) {
-							getDocument().getDocumentGraph().addLayer(sLayer);
-						}
-					}
-				}
+				
 				
 				if(annoPrimRelations.get(primText)!= null){
 					for(int annoTier : annoPrimRelations.get(primText)){
@@ -415,12 +415,23 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 //								System.out.println("token: "+ corpusSheet.getRow(currAnno).getCell(primText) +", tokenList: " + sTokens + ", anno: " + annoText);
 								
 								if(annoSpan != null && headerRow.getCell(annoTier) != null && !headerRow.getCell(annoTier).toString().equals("")){
-								annoSpan.createAnnotation(null, headerRow.getCell(annoTier).toString(),annoText);
+									annoSpan.createAnnotation(null, headerRow.getCell(annoTier).toString(),annoText);
+									annoSpan.setName(headerRow.getCell(annoTier).toString());
 								}
 							
 							}
 							
 							currAnno++;
+						}
+						if(getProps().getLayer() != null){
+							
+							if (getLayerTierCouples().size() > 0) {
+								if(getLayerTierCouples().get(headerRow.getCell(annoTier).toString()) != null){
+									SLayer sLayer = getLayerTierCouples().get(headerRow.getCell(annoTier).toString());
+									getDocument().getDocumentGraph().addLayer(sLayer);
+									sLayer.addNode(annoSpan);
+								}
+							}
 						}
 					}
 				}
@@ -670,7 +681,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 						}	
 		}
 	}
-
+	
 	
 //	private int getLastRowOfCorpus(Workbook workbook) {
 //		return 0;
