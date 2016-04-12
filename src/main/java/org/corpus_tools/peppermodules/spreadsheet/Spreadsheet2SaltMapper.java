@@ -203,9 +203,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					setPrimText(corpusSheet, primTextPos, annoPrimRelations);
 				}
 			}
+			if(getProps().getMetaAnnotation()){
+				setDocMetaData(workbook);
+			}
 		}
 	}
 
+	
 	/**
 	 * Set the primary text of each document
 	 * 
@@ -627,6 +631,46 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		
 		return annoLayerCoupleMap;
 	}
+	
+
+	private void setDocMetaData(Workbook workbook) {
+		Sheet metaSheet;
+		
+		// default ("Tabelle2"/ second sheet)
+		if (getProps().getMetaSheet().equals("Tabelle2")) {
+			metaSheet = workbook.getSheetAt(1);
+		} else {
+			// get corpus sheet by name
+			metaSheet = workbook.getSheet(getProps().getCorpusSheet());
+		}
+
+		if (metaSheet != null) {
+			DataFormatter formatter = new DataFormatter();
+			// start with the second row of the table, since the first row holds the name of each tier
+						int currRow = 1;
+						while (currRow < metaSheet.getPhysicalNumberOfRows()) {
+						// iterate through all rows of the given meta informations
+							
+							Row row = metaSheet.getRow(currRow);
+							Cell metaKey = row.getCell(0);
+							Cell metaValue = row.getCell(1);
+							
+							if(metaKey != null && !metaKey.toString().equals("")){
+								if(metaValue != null && !metaValue.toString().equals("")){
+									if(getDocument().getMetaAnnotation(metaKey.toString()) == null){
+										getDocument().createMetaAnnotation(null, formatter.formatCellValue(metaKey), formatter.formatCellValue(metaValue));
+									} else{
+										SpreadsheetImporter.logger.warn("A meta information with the name \"" + formatter.formatCellValue(metaKey) + "\" allready exists and will not be replaced.");
+									}
+								} else{
+									SpreadsheetImporter.logger.warn("No value for the meta data: \"" + metaKey.toString() + "\" found.");
+								}
+							}
+							currRow++;
+						}	
+		}
+	}
+
 	
 //	private int getLastRowOfCorpus(Workbook workbook) {
 //		return 0;

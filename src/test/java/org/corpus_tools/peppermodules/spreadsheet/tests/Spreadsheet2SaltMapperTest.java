@@ -439,6 +439,9 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
 
 		start(getFixture(), outStream.toString());
 		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTextualDSs().size());
@@ -462,7 +465,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok");
-
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTokens());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTokens().get(0));
@@ -498,7 +504,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok, tok2");
-
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTokens());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getTokens().get(0));
@@ -537,6 +546,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok, tok2");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 		assertEquals(2, getFixture().getDocument().getDocumentGraph()
 				.getTextualDSs().size());
@@ -569,6 +582,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
 				.setValue("tok, tok2");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
@@ -586,6 +603,10 @@ public class Spreadsheet2SaltMapperTest {
 		createSecondXlsxSample();
 		((PepperModuleProperty<String>) getFixture().getProperties().getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET)).setValue("secondXlsxSample");
 		((PepperModuleProperty<String>) getFixture().getProperties().getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT)).setValue("tok, tok2");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 		
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());
@@ -625,6 +646,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
 				.setValue("anno1>anno1[tok], anno2>anno2[tok2]");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
@@ -669,6 +694,10 @@ public class Spreadsheet2SaltMapperTest {
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
 				.setValue("anno1>anno1[tok], anno2>anno2[tok2], lb>lb[tok]");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
 		start(getFixture(), outStream.toString());
 
 //		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
