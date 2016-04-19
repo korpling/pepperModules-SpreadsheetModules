@@ -368,7 +368,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 										}
 									}
 								} catch (Exception e) {
-									SpreadsheetImporter.logger.error("Segmantation error: The segmantation of the tier \"" + headerRow.getCell(annoTier).toString() + "\" in the document: \"" + getResourceURI().lastSegment() + "\" in line: "+ currAnno +" does not match to its primary text.");
+									//TODO: replace error message by the line underneath
+//									SpreadsheetImporter.logger.error("Segmentation error in doc: \"" + getResourceURI().lastSegment() + "\"\t anno: \"" + headerRow.getCell(annoTier).toString() + "\"\t primText: \"" + headerRow.getCell(primText).toString() + "\"\t line: "+ currAnno);									
+									SpreadsheetImporter.logger.error("Segmentation error: The segmantation of the tier \"" + headerRow.getCell(annoTier).toString() + "\" in the document: \"" + getResourceURI().lastSegment() + "\" in line: "+ currAnno +" does not match to its primary text: \"" + headerRow.getCell(primText).toString() + "\".");
 								}
 							
 								for (SToken help : helper){
@@ -386,7 +388,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 							
 							currAnno++;
 						}
-						if(getProps().getLayer() != null){
+						if(getProps().getLayer() != null && annoSpan != null){
 							
 							if (getLayerTierCouples().size() > 0) {
 								if(getLayerTierCouples().get(headerRow.getCell(annoTier).toString()) != null){
