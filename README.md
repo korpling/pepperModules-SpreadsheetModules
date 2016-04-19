@@ -112,9 +112,9 @@ Along with tokens annotations are also modeled as columns in a spreadsheet as sh
 	<tr><td>This</td><td>This</td><td>a11</td><td>a21</td></tr>
 	<tr><td>is</td><td>is</td><td>a12</td><td>a22</td></tr>
 	<tr><td>an</td><td>an</td><td>a13</td><td>a23</td></tr>
-	<tr><td>ex-</td><td>example</td></td><td>a14</td><td>a24</td></tr>
-	<<tr><td>sample</td><td></td><td>a15</td><td>a25</td></tr>
-	<tr><td>.</td><td>.</td><td>a16</td><td>a26</td></tr>
+	<tr><td>ex-</td><td rowspan="2">example</td></td><td>a14</td><td rowspan="2">a24</td></tr>
+	<<tr><td>sample</td><td>a15</td></tr>
+	<tr><td>.</td><td>.</td><td>a16</td><td>a25</td></tr>
 </table>
 
 whereas 'anno1' and 'anno2' are annotation tiers and 'prim1' and 'primNorm' are primary text tiers. If your corpus contains more than one primary text tier as in the sample, it's not clear to which primary text a given annotation is related to. Thus you need to specify for each annotation tier to which primary text tier it relates to. This can be managed in the annotation itself, by writing the primary text tier in square brackets behind the annotation name as in the following samle:
