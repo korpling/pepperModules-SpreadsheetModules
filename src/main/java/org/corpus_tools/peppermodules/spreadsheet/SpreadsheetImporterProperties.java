@@ -34,6 +34,7 @@ public class SpreadsheetImporterProperties extends PepperModuleProperties {
 	public static final String PROP_SET_LAYER = "setLayer";
 	public static final String PROP_META_ANNO = "metaAnnotation";
 	public static final String PROP_INCLUDE_EMPTY_PRIM_CELLS = "includeEmptyPrimCells";
+	public static final String PROP_ADD_ORDER_RELATION = "addOrderRelation";
 
 	public SpreadsheetImporterProperties() {
 		addProperty(new PepperModuleProperty<>(PROP_PRIMARY_TEXT, String.class, "Defines the name of the column(s), that hold the primary text, this can either be a single column name, or a comma seperated enumeration of column names (key: 'primText', default value: 'tok').", "tok", false));
@@ -43,6 +44,7 @@ public class SpreadsheetImporterProperties extends PepperModuleProperties {
 		addProperty(new PepperModuleProperty<>(PROP_META_SHEET, String.class, "Defines the sheet, that holds the meta information of the document (key: 'metaSheet', default is 'Tabelle2'). By default the second sheet of your spreadsheets will be used (independent of the name).", "Tabelle2", false));
 		addProperty(new PepperModuleProperty<>(PROP_META_ANNO, Boolean.class, "Defines, if another sheet shall be scaned for meta annotation (key: 'metaAnnotation', default is 'true').", true, false));
 		addProperty(new PepperModuleProperty<>(PROP_INCLUDE_EMPTY_PRIM_CELLS, Boolean.class, "If true allow empty cells of primary text, default is 'false'",  false, false));
+		addProperty(new PepperModuleProperty<>(PROP_ADD_ORDER_RELATION, Boolean.class, "If true add an explicit order relation between each primary text token. Default is 'true'",  true, false));
 	}
 
 	
@@ -72,5 +74,9 @@ public class SpreadsheetImporterProperties extends PepperModuleProperties {
 	
 	public Boolean getIncludeEmptyPrimCells() {
 		return (Boolean) getProperty(PROP_INCLUDE_EMPTY_PRIM_CELLS).getValue();
+	}
+	
+	public Boolean getAddOrderRelation() {
+		return (Boolean) getProperty(PROP_ADD_ORDER_RELATION).getValue();
 	}
 }

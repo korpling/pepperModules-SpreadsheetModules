@@ -281,7 +281,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				}
 				
 				if(currTok != null) {
-					if (lastTok != null) {
+					if (lastTok != null && getProps().getAddOrderRelation()) {
 						addOrderRelation(lastTok, currTok, headerRow.getCell(primText).toString());
 					}
 					// creating textual relation
