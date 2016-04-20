@@ -44,8 +44,8 @@
 	</organization>
 	<scm>
 
-		<developerConnection>git@github.com:korpling/pepperModules-SpreadsheetModules.git</developerConnection>
-		<url>https://github.com/korpling/pepperModules-SpreadsheetModules.git</url>
+		<developerConnection>scm:git:ssh://git@github.com:korpling/pepperModules-SpreadsheetModules.git</developerConnection>
+		<url>scm:git:https://github.com/korpling/pepperModules-SpreadsheetModules.git</url>
 	</scm>
 
 	<dependencies>
