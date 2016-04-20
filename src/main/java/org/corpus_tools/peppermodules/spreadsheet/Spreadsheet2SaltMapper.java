@@ -75,17 +75,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		return DOCUMENT_STATUS.COMPLETED;
 	}
 
-	// row that holds the name of each tier
-	public Row headerRow;
-
-	// save all token of a given annotation
-	SSpan annoSpan = SaltFactory.createSSpan();
-
-	STimeline timeline = SaltFactory.createSTimeline();
 
 	private void readSpreadsheetResource(String resource) {
 		getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
 
+		STimeline timeline = SaltFactory.createSTimeline();
 		getDocument().getDocumentGraph().setTimeline(timeline);
 
 		SpreadsheetImporter.logger.debug("Importing the file {}.", resource);
@@ -106,7 +100,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			SpreadsheetImporter.logger.warn("Could not open file '" + resource + "'.");
 		}
 
-		getPrimTextTiers(workbook);
+		getPrimTextTiers(workbook, timeline);
 
 	}
 
@@ -130,7 +124,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @param workbook
 	 *            of the excel file
 	 */
-	private void getPrimTextTiers(Workbook workbook) {
+	private void getPrimTextTiers(Workbook workbook, STimeline timeline) {
 		// get all primary text tiers
 		String primaryTextTier = getProps().getPrimaryText();
 		// seperate string of primary text tiers into list by commas
@@ -153,7 +147,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			if (corpusSheet != null) {
 
 				// row with all names of the annotation tiers (first row)
-				headerRow = corpusSheet.getRow(0);
+				Row headerRow = corpusSheet.getRow(0);
 				// List for each primary text and its annotations
 				HashMap<Integer, List<Integer>> annoPrimRelations = new HashMap<>();
 
@@ -175,12 +169,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							if (getPrimOfAnnoPrimRel(tierName) != null) {
 								// current tier is an annotation and the
 								// belonging primary text was set by property
-								setAnnotationPrimCouple(getPrimOfAnnoPrimRel(tierName), annoPrimRelations, currColumn);
+								setAnnotationPrimCouple(getPrimOfAnnoPrimRel(tierName), annoPrimRelations, currColumn, headerRow);
 							} else if (tierName.matches(".+\\[.+\\]")) {
 								// the belonging primary text was set by the
 								// annotator
 								String primTier = tierName.split("\\[")[1].replace("]", "");
-								setAnnotationPrimCouple(primTier, annoPrimRelations, currColumn);
+								setAnnotationPrimCouple(primTier, annoPrimRelations, currColumn, headerRow);
 							} else {
 								SpreadsheetImporter.logger
 										.warn("No primary text for the annotation '" + tierName + "' given.");
@@ -192,7 +186,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 				if (primTextPos != null) {
 
-					setPrimText(corpusSheet, primTextPos, annoPrimRelations);
+					setPrimText(corpusSheet, primTextPos, annoPrimRelations, headerRow);
 				}
 			}
 			if (getProps().getMetaAnnotation()) {
@@ -212,7 +206,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @return
 	 */
 	private void setPrimText(Sheet corpusSheet, List<Integer> primTextPos,
-			HashMap<Integer, List<Integer>> annoPrimRelations) {
+			HashMap<Integer, List<Integer>> annoPrimRelations, Row headerRow) {
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
 		List<SToken> currentTokList = new ArrayList<>();
@@ -318,7 +312,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			if (annoPrimRelations.get(primText) != null) {
 				for (int annoTier : annoPrimRelations.get(primText)) {
 
+					SSpan annoSpan = null;
 					int currAnno = 1;
+					
 					while (currAnno < corpusSheet.getPhysicalNumberOfRows()) {
 						Row row = corpusSheet.getRow(currAnno);
 						Cell annoCell = row.getCell(annoTier);
@@ -431,7 +427,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @param currColumn
 	 */
 	private void setAnnotationPrimCouple(String primTier, HashMap<Integer, List<Integer>> annoPrimRelations,
-			int currColumn) {
+			int currColumn, Row headerRow) {
 
 		if (getColumn(primTier, headerRow) != null) {
 			int primData = getColumn(primTier, headerRow);
