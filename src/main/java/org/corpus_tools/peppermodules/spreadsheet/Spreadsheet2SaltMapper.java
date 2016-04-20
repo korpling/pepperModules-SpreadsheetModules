@@ -78,16 +78,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	// row that holds the name of each tier
 	public Row headerRow;
 
-	// save all tokens of the current primary text
-	List<SToken> currentTokList = new ArrayList<>();
-
-	// save all token of a primary tier as a span
-	SSpan tokSpan = SaltFactory.createSSpan();
 	// save all token of a given annotation
 	SSpan annoSpan = SaltFactory.createSSpan();
-
-	// maybe use the StringBuilder
-	private StringBuilder currentText = new StringBuilder();
 
 	STimeline timeline = SaltFactory.createSTimeline();
 
@@ -222,26 +214,25 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	private void setPrimText(Sheet corpusSheet, List<Integer> primTextPos,
 			HashMap<Integer, List<Integer>> annoPrimRelations) {
 		DataFormatter formatter = new DataFormatter();
-		STextualDS primaryText = null;
-		// (re-)initialize current tok list and span
-		currentTokList = new ArrayList<>();
-		tokSpan = SaltFactory.createSSpan();
+		// save all tokens of the current primary text
+		List<SToken> currentTokList = new ArrayList<>();
+		SSpan tokSpan = SaltFactory.createSSpan();
 		// save all tokens of the current primary text
 		for (int primText : primTextPos) {
 
 			// initialize primaryText
-			primaryText = SaltFactory.createSTextualDS();
-			primaryText.setText("");
+			STextualDS primaryText = SaltFactory.createSTextualDS();
+			StringBuilder currentText = new StringBuilder();
+			
+			
 			if (headerRow.getCell(primText) != null) {
 				primaryText.setName(headerRow.getCell(primText).toString());
 			}
 			getDocument().getDocumentGraph().addNode(primaryText);
 
-			int offset = primaryText.getText().length();
+			int offset = currentText.length();
 
-			currentText = new StringBuilder();
-			String text = currentText.toString();
-
+			
 			SToken lastTok = null;
 
 			// start with the second row of the table, since the first row holds
@@ -256,6 +247,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				SToken currTok = null;
 				int endCell = currRow;
 
+				String text = "";
 				if (primCell != null && !primCell.toString().isEmpty()) {
 					text = formatter.formatCellValue(primCell);
 					
@@ -294,13 +286,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					
 					// insert space between tokens
 					if (primCell != null && !primCell.toString().isEmpty() && (currRow != corpusSheet.getLastRowNum())) {
-						text += " ";
+						currentText.append(" ");
 						offset++;
 					}
-
-					// TODO: delete debug print
-					// System.out.println(text);
-					primaryText.setText(primaryText.getText() + text);
 				}
 
 				
@@ -309,6 +297,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				}
 				currRow++;
 			}
+			primaryText.setText(currentText.toString());
+			
 			tokSpan = getDocument().getDocumentGraph().createSpan(currentTokList);
 			tokSpan.setName(headerRow.getCell(primText).toString());
 
