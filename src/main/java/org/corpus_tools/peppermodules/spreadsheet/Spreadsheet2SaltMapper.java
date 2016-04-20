@@ -355,14 +355,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 							List<SToken> helper = new ArrayList<>();
 
-							try {
-								for (SToken tok : sTokens) {
-									STextualDS textualDS = getTextualDSForNode(tok, getDocument().getDocumentGraph());
-									if (!textualDS.getName().equals(headerRow.getCell(primText).toString())) {
-										helper.add(tok);
-									}
-								}
-							} catch (Exception e) {
+							if(sTokens == null) {
 								// TODO: replace error message by the line
 								// underneath
 								// SpreadsheetImporter.logger.error("Segmentation
@@ -377,6 +370,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 										+ getResourceURI().lastSegment() + "\" in line: " + currAnno
 										+ " does not match to its primary text: \""
 										+ headerRow.getCell(primText).toString() + "\".");
+							} else {
+								for (SToken tok : sTokens) {
+									STextualDS textualDS = getTextualDSForNode(tok, getDocument().getDocumentGraph());
+									if (!textualDS.getName().equals(headerRow.getCell(primText).toString())) {
+										helper.add(tok);
+									}
+								}
 							}
 
 							for (SToken help : helper) {
