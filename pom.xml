@@ -19,14 +19,6 @@
 		<docbkx-fop-support.version>2.0.14</docbkx-fop-support.version>
 		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
 	</properties>
-	<distributionManagement>
-		<repository>
-			<id>korpling</id>
-			<name>korpling maven repo</name>
-			<url>file:///srv/www/maven2/</url>
-
-		</repository>
-	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>korpling</id>
@@ -34,7 +26,6 @@
 			<url>http://korpling.german.hu-berlin.de/maven2</url>
 		</repository>
 	</repositories>
-	<description>This project provides three sample modules for Pepper. It provides an importer, an exporter and a manipulator. The project can be used as a container for creating new PepperModules. One just have to override the areas marked with TODO.</description>
 	<url>https://github.com/korpling/pepperModules-SpreadsheetModules</url>
 	<issueManagement>
 		<system>Redmine</system>

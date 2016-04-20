@@ -1,6 +1,6 @@
 ![SaltNPepper project](./gh-site/img/SaltNPepper_logo2010.png)
 # pepperModules-SpreadsheetModules
-This project provides an importer to support the [Excel](https://products.office.com/de-de/excel) format in linguistic converter framework Pepper (see https://u.hu-berlin.de/saltnpepper). A detailed description of the importer can be found in section [SpreadsheetImporter](#importer).
+This project provides an importer to support the [Excel](https://products.office.com/de-de/excel) format in linguistic converter framework Pepper (see https://u.hu-berlin.de/saltnpepper). A detailed description of the importer can be found in section [SpreadsheetImporter](#spreadsheetimporter).
 
 Pepper is a pluggable framework to convert a variety of linguistic formats (like [TigerXML](http://www.ims.uni-stuttgart.de/forschung/ressourcen/werkzeuge/TIGERSearch/doc/html/TigerXML.html), the [EXMARaLDA format](http://www.exmaralda.org/), [PAULA](http://www.sfb632.uni-potsdam.de/paula.html) etc.) into each other. Furthermore Pepper uses Salt (see https://github.com/korpling/salt), the graph-based meta model for linguistic data, which acts as an intermediate model to reduce the number of mappings to be implemented. That means converting data from a format _A_ to format _B_ consists of two steps. First the data is mapped from format _A_ to Salt and second from Salt to format _B_. This detour reduces the number of Pepper modules from _n<sup>2</sup>-n_ (in the case of a direct mapping) to _2n_ to handle a number of n formats.
 
@@ -64,7 +64,7 @@ or
 </importer>
 ```
 
-# <a name="importer">SpreadsheetImporter</a>
+# SpreadsheetImporter
 At this stage, we want to explain the mapping of a Spreadsheet model to a Salt model. Since there are some conceptual differences between both models, we need to bridge the Spreadsheet model to the graph based Salt model.
 
 ## Corpus information and meta data
@@ -134,7 +134,7 @@ If your annotations do not contain those specifications you can add them by the 
 ## Meta Annotations
 The module currently supports meta annotations of a document only in a specific way. It is assumed that the first column of the sheet, that holds the meta data, contains the meta annotation names, while the second column holds the respective meta annotation value. All other columns will be ignored by the module.
 
-## <a name="properties">Properties</a>
+## Properties
 The table contains an overview of all usable properties to customize the behavior of this Pepper module. 
 
 |Name of property	 |Type of property	                                            |optional/ mandatory |	default value |
@@ -206,10 +206,10 @@ Since this Pepper module is under a free license, please feel free to fork it fr
 If you have found any bugs, or have some feature request, please open an issue on github. If you need any help, please write an e-mail to saltnpepper@lists.hu-berlin.de .
 
 ## Funders
-This project has been funded by the [department of corpus linguistics and morphology](https://www.linguistik.hu-berlin.de/institut/professuren/korpuslinguistik/) of the Humboldt-Universität zu Berlin, the Institut national de recherche en informatique et en automatique ([INRIA](www.inria.fr/en/)) and the [Sonderforschungsbereich 632](https://www.sfb632.uni-potsdam.de/en/). 
+This project has been funded by the [department of corpus linguistics and morphology](https://www.linguistik.hu-berlin.de/institut/professuren/korpuslinguistik/) of the Humboldt-Universität zu Berlin. 
 
 ## License
-  Copyright 2009 Humboldt-Universität zu Berlin, INRIA.
+  Copyright 2016 Humboldt-Universität zu Berlin, INRIA.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
