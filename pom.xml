@@ -3,23 +3,16 @@
 	<parent>
 		<groupId>org.corpus-tools</groupId>
 		<artifactId>pepper-parentModule</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>pepperModules-SpreadsheetModules</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<version>0.0.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	
-	<repositories>
-		<repository>
-			<id>korpling</id>
-			<name>korpling maven repo</name>
-			<url>http://korpling.german.hu-berlin.de/maven2</url>
-		</repository>
-	</repositories>
 	<url>https://github.com/korpling/pepperModules-SpreadsheetModules</url>
 	<issueManagement>
-		<system>Redmine</system>
+		<system>GitHub</system>
 		<url>https://github.com/korpling/pepperModules-SpreadsheetModules/issues</url>
 	</issueManagement>
 
