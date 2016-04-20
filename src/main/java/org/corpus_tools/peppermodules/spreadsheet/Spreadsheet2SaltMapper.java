@@ -254,53 +254,46 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 				Cell primCell = row.getCell(primText);
 				SToken currTok = null;
+				int endCell = currRow;
 
-				if (primCell != null && !primCell.toString().equals("")) {
+				if (primCell != null && !primCell.toString().isEmpty()) {
 					text = formatter.formatCellValue(primCell);
-
+					
 					int start = offset;
 					int end = start + text.length();
 					offset += text.length();
 					currentText.append(text);
 
 					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
-
-				}
-
-				if (lastTok != null && currTok != null) {
-					SOrderRelation primTextOrder = SaltFactory.createSOrderRelation();
-					primTextOrder.setType(headerRow.getCell(primText).toString());
-
-					primTextOrder.setSource(lastTok);
-					primTextOrder.setTarget(currTok);
-					getDocument().getDocumentGraph().addRelation(primTextOrder);
-
-					// creating textual relation
-					STextualRelation sTextRel = SaltFactory.createSTextualRelation();
-					sTextRel.setTarget(primaryText);
-					sTextRel.setSource(currTok);
-					sTextRel.setStart(offset);
-					sTextRel.setEnd(text.length());
-					getDocument().getDocumentGraph().addRelation(sTextRel);
-				}
-				if (currTok != null) {
-					// set timeline
-					STimelineRelation sTimeRel = SaltFactory.createSTimelineRelation();
-					sTimeRel.setSource(currTok);
-					sTimeRel.setTarget(getDocument().getDocumentGraph().getTimeline());
-					int endTime = currRow;
+					
 					if (isMergedCell(primCell, corpusSheet)) {
-						endTime = getLastCell(primCell, corpusSheet);
+						endCell = getLastCell(primCell, corpusSheet);
 					}
-					sTimeRel.setStart(currRow - 1);
-					sTimeRel.setEnd(endTime);
-					getDocument().getDocumentGraph().addRelation(sTimeRel);
+					
+				} else if(getProps().getIncludeEmptyPrimCells()) {
+					text = "";
+					
+					int start = offset;
+					int end = start;
+					currentText.append(text);
+
+					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
+				}
+				
+				if(currTok != null) {
+					if (lastTok != null) {
+						addOrderRelation(lastTok, currTok, headerRow.getCell(primText).toString());
+					}
+					// creating textual relation
+					addTextualRelation(currTok, primaryText, offset, text.length());
+					// add timeline relation
+					addTimelineRelation(currTok, currRow, endCell, corpusSheet);
 
 					// remember all SToken
 					currentTokList.add(currTok);
-
+					
 					// insert space between tokens
-					if (!primCell.toString().isEmpty() && (currRow != corpusSheet.getLastRowNum())) {
+					if (primCell != null && !primCell.toString().isEmpty() && (currRow != corpusSheet.getLastRowNum())) {
 						text += " ";
 						offset++;
 					}
@@ -309,6 +302,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					// System.out.println(text);
 					primaryText.setText(primaryText.getText() + text);
 				}
+
+				
 				if (currTok != null) {
 					lastTok = currTok;
 				}
@@ -408,6 +403,33 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				}
 			}
 		}
+	}
+	
+	private void addTimelineRelation(SToken tok, int currRow, int endTime, Sheet corpusSheet) {
+		STimelineRelation sTimeRel = SaltFactory.createSTimelineRelation();
+		sTimeRel.setSource(tok);
+		sTimeRel.setTarget(getDocument().getDocumentGraph().getTimeline());
+		sTimeRel.setStart(currRow - 1);
+		sTimeRel.setEnd(endTime);
+		getDocument().getDocumentGraph().addRelation(sTimeRel);
+	}
+	
+	private void addTextualRelation(SToken tok, STextualDS primaryText, int start, int end) {
+		STextualRelation sTextRel = SaltFactory.createSTextualRelation();
+		sTextRel.setTarget(primaryText);
+		sTextRel.setSource(tok);
+		sTextRel.setStart(start);
+		sTextRel.setEnd(end);
+		getDocument().getDocumentGraph().addRelation(sTextRel);
+	}
+	
+	private void addOrderRelation(SToken lastTok, SToken currTok, String name) {
+		SOrderRelation primTextOrder = SaltFactory.createSOrderRelation();
+		primTextOrder.setType(name);
+
+		primTextOrder.setSource(lastTok);
+		primTextOrder.setTarget(currTok);
+		getDocument().getDocumentGraph().addRelation(primTextOrder);
 	}
 
 	/**
