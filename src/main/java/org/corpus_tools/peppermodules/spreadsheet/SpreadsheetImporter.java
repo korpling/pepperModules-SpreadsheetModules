@@ -60,6 +60,7 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 		addSupportedFormat("xlsx", "2007+", null);
 		getDocumentEndings().add("xlsx");
 		getDocumentEndings().add("xls");
+		setIsMultithreaded(false);
 		this.setProperties(new SpreadsheetImporterProperties());
 	}
 	
