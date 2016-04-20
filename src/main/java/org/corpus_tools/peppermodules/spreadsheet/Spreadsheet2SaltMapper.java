@@ -259,7 +259,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					text = "";
 					
 					int start = offset;
-					int end = start;
+					int end = start + text.length();
+					offset += text.length();
 					currentText.append(text);
 
 					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
@@ -278,7 +279,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					currentTokList.add(currTok);
 					
 					// insert space between tokens
-					if (primCell != null && !primCell.toString().isEmpty() && (currRow != corpusSheet.getLastRowNum())) {
+					if (text != null && (currRow != corpusSheet.getLastRowNum())) {
 						currentText.append(" ");
 						offset++;
 					}
