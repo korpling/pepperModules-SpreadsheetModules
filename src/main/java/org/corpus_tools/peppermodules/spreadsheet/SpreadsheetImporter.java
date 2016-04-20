@@ -55,7 +55,6 @@ public class SpreadsheetImporter extends PepperImporterImpl implements PepperImp
 	public SpreadsheetImporter(){
 		super();
 		setSupplierContact(URI.createFileURI(PepperConfiguration.EMAIL));
-		setSupplierHomepage(URI.createFileURI(PepperConfiguration.HOMEPAGE));
 		setName(MODULE_NAME);
 		addSupportedFormat("xls", "97-2008", null);
 		addSupportedFormat("xlsx", "2007+", null);
