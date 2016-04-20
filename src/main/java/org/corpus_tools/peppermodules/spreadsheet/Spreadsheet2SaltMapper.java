@@ -210,7 +210,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
 		List<SToken> currentTokList = new ArrayList<>();
-		SSpan tokSpan = SaltFactory.createSSpan();
 		// save all tokens of the current primary text
 		for (int primText : primTextPos) {
 
@@ -293,21 +292,19 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			}
 			primaryText.setText(currentText.toString());
 			
-			tokSpan = getDocument().getDocumentGraph().createSpan(currentTokList);
-			tokSpan.setName(headerRow.getCell(primText).toString());
 
 			if (getProps().getLayer() != null) {
 
-				if (getLayerTierCouples().size() > 0) {
-					if (getLayerTierCouples().get(tokSpan.getName()) != null) {
-						SLayer sLayer = getLayerTierCouples().get(tokSpan.getName());
+				if (currentTokList != null && getLayerTierCouples().size() > 0) {
+					if (getLayerTierCouples().get(primaryText.getName()) != null) {
+						SLayer sLayer = getLayerTierCouples().get(primaryText.getName());
 						getDocument().getDocumentGraph().addLayer(sLayer);
-						sLayer.addNode(tokSpan);
+						for(SToken t : currentTokList) {
+							sLayer.addNode(t);
+						}
 					}
 				}
 			}
-
-			getDocument().getDocumentGraph().addNode(tokSpan);
 
 			if (annoPrimRelations.get(primText) != null) {
 				for (int annoTier : annoPrimRelations.get(primText)) {
