@@ -270,8 +270,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					if (lastTok != null && getProps().getAddOrderRelation()) {
 						addOrderRelation(lastTok, currTok, headerRow.getCell(primText).toString());
 					}
-					// creating textual relation
-					addTextualRelation(currTok, primaryText, offset, text.length());
 					// add timeline relation
 					addTimelineRelation(currTok, currRow, endCell, corpusSheet);
 
@@ -396,15 +394,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		sTimeRel.setStart(currRow - 1);
 		sTimeRel.setEnd(endTime);
 		getDocument().getDocumentGraph().addRelation(sTimeRel);
-	}
-	
-	private void addTextualRelation(SToken tok, STextualDS primaryText, int start, int end) {
-		STextualRelation sTextRel = SaltFactory.createSTextualRelation();
-		sTextRel.setTarget(primaryText);
-		sTextRel.setSource(tok);
-		sTextRel.setStart(start);
-		sTextRel.setEnd(end);
-		getDocument().getDocumentGraph().addRelation(sTextRel);
 	}
 	
 	private void addOrderRelation(SToken lastTok, SToken currTok, String name) {
