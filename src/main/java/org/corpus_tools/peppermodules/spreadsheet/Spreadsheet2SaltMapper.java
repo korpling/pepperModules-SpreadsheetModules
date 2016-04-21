@@ -211,8 +211,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 */
 	private void setPrimText(Sheet corpusSheet, List<Integer> primTextPos,
 			HashMap<Integer, List<Integer>> annoPrimRelations, Row headerRow) {
-		
-	  final int progressTotalNumberOfColumns = primTextPos.size() + annoPrimRelations.size();
+		// initialize with number of token we have to create
+		int progressTotalNumberOfColumns = primTextPos.size();
+		// add each annotation to this number
+		for(List<Integer> annos : annoPrimRelations.values()) {
+			progressTotalNumberOfColumns += annos.size();
+		}
 		int progressProcessedNumberOfColumns = 0;
 		
 		final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
@@ -395,10 +399,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							}
 						}
 					}
+					progressProcessedNumberOfColumns++;
+					setProgress((double) progressProcessedNumberOfColumns / (double) progressTotalNumberOfColumns);
 				} // end for each annotation layer
-				
-				progressProcessedNumberOfColumns++;
-				setProgress((double) progressProcessedNumberOfColumns / (double) progressTotalNumberOfColumns);
 			}
 		} // end for each primTextPos
 	}
