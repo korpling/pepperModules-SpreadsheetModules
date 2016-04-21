@@ -214,6 +214,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		
 	  final int progressTotalNumberOfColumns = primTextPos.size() + annoPrimRelations.size();
 		int progressProcessedNumberOfColumns = 0;
+		
+		final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
 	  
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
@@ -304,9 +306,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 			if (getProps().getLayer() != null) {
 
-				if (currentTokList != null && getLayerTierCouples().size() > 0) {
-					if (getLayerTierCouples().get(primaryText.getName()) != null) {
-						SLayer sLayer = getLayerTierCouples().get(primaryText.getName());
+				if (currentTokList != null && layerTierCouples.size() > 0) {
+					if (layerTierCouples.get(primaryText.getName()) != null) {
+						SLayer sLayer = layerTierCouples.get(primaryText.getName());
 						getDocument().getDocumentGraph().addLayer(sLayer);
 						for(SToken t : currentTokList) {
 							sLayer.addNode(t);
@@ -384,9 +386,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					} // end for each row of annotation
 					if (getProps().getLayer() != null && annoSpan != null) {
 
-						if (getLayerTierCouples().size() > 0) {
-							if (getLayerTierCouples().get(headerRow.getCell(annoTier).toString()) != null) {
-								SLayer sLayer = getLayerTierCouples().get(headerRow.getCell(annoTier).toString());
+						if (layerTierCouples.size() > 0) {
+							if (layerTierCouples.get(headerRow.getCell(annoTier).toString()) != null) {
+								SLayer sLayer = layerTierCouples.get(headerRow.getCell(annoTier).toString());
 								getDocument().getDocumentGraph().addLayer(sLayer);
 								sLayer.addNode(annoSpan);
 							}
