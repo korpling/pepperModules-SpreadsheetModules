@@ -45,7 +45,6 @@ import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SOrderRelation;
 import org.corpus_tools.salt.common.SSpan;
 import org.corpus_tools.salt.common.STextualDS;
-import org.corpus_tools.salt.common.STextualRelation;
 import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
@@ -175,6 +174,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 								// annotator
 								String primTier = tierName.split("\\[")[1].replace("]", "");
 								setAnnotationPrimCouple(primTier, annoPrimRelations, currColumn, headerRow);
+								
+							} else if (primaryTextTierList.size() == 1) {
+								// There is only one primary text so we can safely assume this is the one
+								// the annotation is connected to.
+								setAnnotationPrimCouple(primaryTextTierList.get(0), annoPrimRelations, currColumn, headerRow);
 							} else {
 								SpreadsheetImporter.logger
 										.warn("No primary text for the annotation '" + tierName + "' given.");
@@ -482,11 +486,14 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		if (annoPrimRel != null) {
 			List<String> annoPrimRelation = Arrays.asList(annoPrimRel.split("\\s*,\\s*"));
 			for (String annoPrim : annoPrimRelation) {
-				String annoName = annoPrim.split(">")[0];
-				String annoPrimCouple = annoPrim.split(">")[1];
-
-				if (annoName.equals(currentTier)) {
-					annoPrimNew = annoPrimCouple.split("\\[")[1].replace("]", "");
+				String[] splitted = annoPrim.split(">", 2);
+				if(splitted.length > 1 ) {
+					String annoName = splitted[0];
+					String annoPrimCouple = splitted[1];
+	
+					if (annoName.equals(currentTier)) {
+						annoPrimNew = annoPrimCouple.split("\\[")[1].replace("]", "");
+					}
 				}
 			}
 		}
