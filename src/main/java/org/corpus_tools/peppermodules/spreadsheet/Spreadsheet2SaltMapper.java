@@ -211,6 +211,10 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 */
 	private void setPrimText(Sheet corpusSheet, List<Integer> primTextPos,
 			HashMap<Integer, List<Integer>> annoPrimRelations, Row headerRow) {
+		
+	  final int progressTotalNumberOfColumns = primTextPos.size() + annoPrimRelations.size();
+		int progressProcessedNumberOfColumns = 0;
+	  
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
 		List<SToken> currentTokList = new ArrayList<>();
@@ -292,9 +296,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					lastTok = currTok;
 				}
 				currRow++;
-			}
+			} // end for each token row
 			primaryText.setText(currentText.toString());
 			
+			progressProcessedNumberOfColumns++;
+			setProgress((double) progressProcessedNumberOfColumns / (double) progressTotalNumberOfColumns);
 
 			if (getProps().getLayer() != null) {
 
@@ -375,7 +381,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 						}
 
 						currAnno++;
-					}
+					} // end for each row of annotation
 					if (getProps().getLayer() != null && annoSpan != null) {
 
 						if (getLayerTierCouples().size() > 0) {
@@ -386,9 +392,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							}
 						}
 					}
-				}
+				} // end for each annotation layer
+				
+				progressProcessedNumberOfColumns++;
+				setProgress((double) progressProcessedNumberOfColumns / (double) progressTotalNumberOfColumns);
 			}
-		}
+		} // end for each primTextPos
 	}
 	
 	private void addTimelineRelation(SToken tok, int currRow, int endTime, Sheet corpusSheet) {
