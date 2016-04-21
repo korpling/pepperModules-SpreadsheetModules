@@ -175,7 +175,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 								String primTier = tierName.split("\\[")[1].replace("]", "");
 								setAnnotationPrimCouple(primTier, annoPrimRelations, currColumn, headerRow);
 								
-							} else if (primaryTextTierList.size() == 1) {
+							} else if (primaryTextTierList.size() == 1 && getProps().getAnnoPrimRel() == null) {
 								// There is only one primary text so we can safely assume this is the one
 								// the annotation is connected to.
 								setAnnotationPrimCouple(primaryTextTierList.get(0), annoPrimRelations, currColumn, headerRow);
