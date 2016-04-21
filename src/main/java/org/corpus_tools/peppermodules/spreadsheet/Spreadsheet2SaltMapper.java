@@ -216,6 +216,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		int progressProcessedNumberOfColumns = 0;
 		
 		final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
+		final List<CellRangeAddress> mergedRegions = corpusSheet.getMergedRegions();
 	  
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
@@ -261,8 +262,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
 					
-					if (isMergedCell(primCell, corpusSheet)) {
-						endCell = getLastCell(primCell, corpusSheet);
+					if (isMergedCell(primCell, corpusSheet, mergedRegions)) {
+						endCell = getLastCell(primCell, corpusSheet, mergedRegions);
 					}
 					
 				} else if(getProps().getIncludeEmptyPrimCells()) {
@@ -332,8 +333,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							annoText = formatter.formatCellValue(annoCell);
 							int annoStart = currAnno - 1;
 							int annoEnd = currAnno;
-							if (isMergedCell(annoCell, corpusSheet)) {
-								annoEnd = getLastCell(annoCell, corpusSheet);
+							if (isMergedCell(annoCell, corpusSheet, mergedRegions)) {
+								annoEnd = getLastCell(annoCell, corpusSheet, mergedRegions);
 							}
 							DataSourceSequence<Integer> sequence = new DataSourceSequence<Integer>();
 							sequence.setStart(annoStart);
@@ -450,11 +451,10 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @param currentSheet
 	 * @return
 	 */
-	private Boolean isMergedCell(Cell currentCell, Sheet currentSheet) {
+	private Boolean isMergedCell(Cell currentCell, Sheet currentSheet, List<CellRangeAddress> sumMergedRegions) {
 		Boolean isMergedCell = false;
 		if (currentCell != null && currentSheet != null) {
-			if (currentSheet.getNumMergedRegions() > 0) {
-				List<CellRangeAddress> sumMergedRegions = currentSheet.getMergedRegions();
+			if (sumMergedRegions != null && !sumMergedRegions.isEmpty()) {
 				for (CellRangeAddress mergedRegion : sumMergedRegions) {
 					if (mergedRegion.isInRange(currentCell.getRowIndex(), currentCell.getColumnIndex())) {
 						isMergedCell = true;
@@ -474,9 +474,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @param currentSheet
 	 * @return
 	 */
-	private int getLastCell(Cell primCell, Sheet currentSheet) {
+	private int getLastCell(Cell primCell, Sheet currentSheet, List<CellRangeAddress> allMergedCells) {
 		int lastCell = primCell.getRowIndex();
-		List<CellRangeAddress> allMergedCells = currentSheet.getMergedRegions();
 		for (CellRangeAddress mergedCell : allMergedCells) {
 			if (mergedCell.isInRange(primCell.getRowIndex(), primCell.getColumnIndex())) {
 				lastCell = mergedCell.getLastRow();
