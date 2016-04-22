@@ -255,31 +255,29 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				SToken currTok = null;
 				int endCell = currRow;
 
-				String text = "";
+				String text = null;
 				if (primCell != null && !primCell.toString().isEmpty()) {
 					text = formatter.formatCellValue(primCell);
 					
-					int start = offset;
-					int end = start + text.length();
-					offset += text.length();
-					currentText.append(text);
-
-					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
-					
-					if (isMergedCell(primCell, corpusSheet, mergedRegions)) {
-						endCell = getLastCell(primCell, corpusSheet, mergedRegions);
-					}
-					
 				} else if(getProps().getIncludeEmptyPrimCells()) {
 					text = "";
-					
+								
+				}
+				if(text != null){
 					int start = offset;
 					int end = start + text.length();
 					offset += text.length();
 					currentText.append(text);
 
 					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
+					
+					if(primCell != null){
+						if (isMergedCell(primCell, corpusSheet, mergedRegions)) {
+							endCell = getLastCell(primCell, corpusSheet, mergedRegions);
+						}
+					}
 				}
+				
 				
 				if(currTok != null) {
 					if (lastTok != null && getProps().getAddOrderRelation()) {
@@ -347,7 +345,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 
 							List<SToken> sTokens = getDocument().getDocumentGraph().getTokensBySequence(sequence);
 
-							List<SToken> helper = new ArrayList<>();
+							List<SToken> tokenOfSpan = new ArrayList<>();
 
 							if(sTokens == null) {
 								// TODO: replace error message by the line
@@ -367,17 +365,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							} else {
 								for (SToken tok : sTokens) {
 									STextualDS textualDS = getTextualDSForNode(tok, getDocument().getDocumentGraph());
-									if (!textualDS.getName().equals(headerRow.getCell(primText).toString())) {
-										helper.add(tok);
+									if (textualDS.getName().equals(headerRow.getCell(primText).toString())) {
+										tokenOfSpan.add(tok);
 									}
 								}
 							}
 
-							for (SToken help : helper) {
-								sTokens.remove(help);
-							}
-
-							annoSpan = getDocument().getDocumentGraph().createSpan(sTokens);
+							annoSpan = getDocument().getDocumentGraph().createSpan(tokenOfSpan);
 
 							if (annoSpan != null && headerRow.getCell(annoTier) != null
 									&& !headerRow.getCell(annoTier).toString().equals("")) {
