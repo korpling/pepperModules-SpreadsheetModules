@@ -68,7 +68,7 @@ public class Spreadsheet2SaltMapperTest {
 		File tmpDir = new File(System.getProperty("java.io.tmpdir")
 				+ "/xls2saltTest/");
 		tmpDir.mkdirs();
-		outFile = new File(tmpDir.getAbsolutePath()
+		outFile = new File(tmpDir,
 				+ System.currentTimeMillis() + ".xls");
 		outStream = new FileOutputStream(outFile);
 
@@ -82,10 +82,11 @@ public class Spreadsheet2SaltMapperTest {
 
 	@After
 	public void tearDown() throws IOException {
+		outStream.flush();
 		outStream.close();
 	}
 
-	private FileOutputStream createFirstXlsSample() throws IOException {
+	private void createFirstXlsSample() throws IOException {
 
 		xlsWb = new HSSFWorkbook();
 		Sheet xlsSheet = xlsWb.createSheet("firstXlsSample");
@@ -127,10 +128,9 @@ public class Spreadsheet2SaltMapperTest {
 
 		xlsWb.write(outStream);
 
-		return outStream;
 	}
 
-	private FileOutputStream createFirstXlsxSample() throws IOException {
+	private void createFirstXlsxSample() throws IOException {
 
 		xlsxWb = new XSSFWorkbook();
 		Sheet xlsSheet = xlsxWb.createSheet("firstXlsxSample");
@@ -171,11 +171,9 @@ public class Spreadsheet2SaltMapperTest {
 		xlsCell62.setCellValue("punct1");
 
 		xlsxWb.write(outStream);
-
-		return outStream;
 	}
 
-	private FileOutputStream createSecondXlsxSample() throws IOException {
+	private void createSecondXlsxSample() throws IOException {
 
 		xlsxWb = new XSSFWorkbook();
 		Sheet xlsxSheet = xlsxWb.createSheet("secondXlsxSample");
@@ -253,11 +251,9 @@ public class Spreadsheet2SaltMapperTest {
 		xlsxCell74.setCellValue("punct2");
 
 		xlsxWb.write(outStream);
-
-		return outStream;
 	}
 	
-	private FileOutputStream createThirdXlsxSample() throws IOException {
+	private void createThirdXlsxSample() throws IOException {
 
 		xlsxWb = new XSSFWorkbook();
 		Sheet xlsxSheet = xlsxWb.createSheet("ThirdXlsxSample");
@@ -335,8 +331,6 @@ public class Spreadsheet2SaltMapperTest {
 		xlsxCell74.setCellValue("punct2");
 
 		xlsxWb.write(outStream);
-
-		return outStream;
 	}
 	
 	private FileOutputStream createFourthXlsxSample() throws IOException {
