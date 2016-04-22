@@ -53,6 +53,10 @@ import org.corpus_tools.salt.core.SNode;
 import org.corpus_tools.salt.util.DataSourceSequence;
 import org.eclipse.emf.common.util.URI;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
+
 /**
  * 
  * @author Vivian Voigt
@@ -115,6 +119,30 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			timeline.increasePointOfTime();
 			currRow++;
 		}
+	}
+	
+	/**
+	 * Create a read-only lookup table for the merged cells.
+	 * @param mergedCells
+	 * @return
+	 */
+	private Table<Integer, Integer, CellRangeAddress> calculateMergedCellIndex(
+			List<CellRangeAddress> mergedCells) {
+		
+		Table<Integer, Integer, CellRangeAddress> idx = HashBasedTable.create();
+		
+		if(mergedCells != null) {
+			for(CellRangeAddress cell : mergedCells) {
+				// add each underlying row/column of the range
+				for(int i=cell.getFirstRow(); i <= cell.getLastRow(); i++) {
+					for(int j=cell.getFirstColumn(); j < cell.getLastColumn(); j++) {
+						idx.put(i, j, cell);
+					}
+				}
+			}
+		}
+		
+		return Tables.unmodifiableTable(idx);
 	}
 
 	/**
@@ -220,7 +248,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		int progressProcessedNumberOfColumns = 0;
 		
 		final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
-		final List<CellRangeAddress> mergedRegions = corpusSheet.getMergedRegions();
+		final Table<Integer, Integer, CellRangeAddress> mergedCells = 
+				calculateMergedCellIndex(corpusSheet.getMergedRegions());
 	  
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
@@ -272,9 +301,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					currTok = getDocument().getDocumentGraph().createToken(primaryText, start, end);
 					
 					if(primCell != null){
-						if (isMergedCell(primCell, corpusSheet, mergedRegions)) {
-							endCell = getLastCell(primCell, corpusSheet, mergedRegions);
-						}
+						endCell = getLastCell(primCell, mergedCells);
 					}
 				}
 				
@@ -334,10 +361,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							String annoText = "";
 							annoText = formatter.formatCellValue(annoCell);
 							int annoStart = currAnno - 1;
-							int annoEnd = currAnno;
-							if (isMergedCell(annoCell, corpusSheet, mergedRegions)) {
-								annoEnd = getLastCell(annoCell, corpusSheet, mergedRegions);
-							}
+							int annoEnd = getLastCell(annoCell, mergedCells);
 							DataSourceSequence<Integer> sequence = new DataSourceSequence<Integer>();
 							sequence.setStart(annoStart);
 							sequence.setEnd(annoEnd);
@@ -442,41 +466,17 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	}
 
 	/**
-	 * computes weather a cell of a given sheet is part of a merged cell
-	 * 
-	 * @param currentCell
-	 * @param currentSheet
-	 * @return
-	 */
-	private Boolean isMergedCell(Cell currentCell, Sheet currentSheet, List<CellRangeAddress> sumMergedRegions) {
-		Boolean isMergedCell = false;
-		if (currentCell != null && currentSheet != null) {
-			if (sumMergedRegions != null && !sumMergedRegions.isEmpty()) {
-				for (CellRangeAddress mergedRegion : sumMergedRegions) {
-					if (mergedRegion.isInRange(currentCell.getRowIndex(), currentCell.getColumnIndex())) {
-						isMergedCell = true;
-						break;
-					}
-				}
-			}
-		}
-		return isMergedCell;
-	}
-
-	/**
 	 * Return the last cell of merged cells
 	 * 
 	 * @param primCell,
 	 *            current cell of the primary text
-	 * @param currentSheet
 	 * @return
 	 */
-	private int getLastCell(Cell primCell, Sheet currentSheet, List<CellRangeAddress> allMergedCells) {
-		int lastCell = primCell.getRowIndex();
-		for (CellRangeAddress mergedCell : allMergedCells) {
-			if (mergedCell.isInRange(primCell.getRowIndex(), primCell.getColumnIndex())) {
-				lastCell = mergedCell.getLastRow();
-			}
+	private int getLastCell(Cell cell, Table<Integer, Integer, CellRangeAddress> mergedCellsIdx) {
+		int lastCell = cell.getRowIndex();
+		CellRangeAddress mergedCell = mergedCellsIdx.get(cell.getRowIndex(), cell.getColumnIndex());
+		if(mergedCell != null) {
+			lastCell = mergedCell.getLastRow();
 		}
 		return lastCell;
 	}
