@@ -137,14 +137,16 @@ The module currently supports meta annotations of a document only in a specific 
 ## Properties
 The table contains an overview of all usable properties to customize the behavior of this Pepper module. 
 
-|Name of property	 |Type of property	                                            |optional/ mandatory |	default value |
-|--------------------|--------------------------------------------------------------|--------------------|----------------|
-|corpusSheet	     |String											             |optional            |	[first sheet] |
-|primText			 |primaryTier1, primaryTier2, ...    					         |optional            |	tok |
-|metaSheet			 |String			                                             |optional            |	[second sheet] |
-|annoPrimRel         |anno1>anno1[primaryTier1], anno2>anno2[primaryTier1], ...		 |optional            |	null |
-|setLayer			 |categoryName>{tier1, tier2, tier3}, categoryName2>{tier4}, ... |optional            |	null |
-|metaAnnotation		 |Boolean	                                                     |optional            |	true |
+|Name of property	   |Type of property	                                            |optional/ mandatory |	default value |
+|----------------------|--------------------------------------------------------------|--------------------|----------------|
+|corpusSheet	       |String											             |optional            |	[first sheet] |
+|primText			   |primaryTier1, primaryTier2, ...    					         |optional            |	tok |
+|metaSheet			   |String			                                             |optional            |	[second sheet] |
+|annoPrimRel           |anno1>anno1[primaryTier1], anno2>anno2[primaryTier1], ...		 |optional            |	null |
+|setLayer			   |categoryName>{tier1, tier2, tier3}, categoryName2>{tier4}, ... |optional            |	null |
+|metaAnnotation		   |Boolean	                                                     |optional            |	true |
+|includeEmptyPrimCells |Boolean	                                                     |optional            |	false |
+|addOrderRelation  	   |Boolean	                                                     |optional            |	true |
 
 
 ### corpusSheet
@@ -200,6 +202,13 @@ If you don't have any meta annotations for your documents, or they don't match t
 ```
 metaAnnotation=false
 ```
+
+### includeEmptyPrimCells
+If the primary text tier of your corpus contains empty cells you need to set the property includeEmptyPrimCells to true, by default this property is set to false.
+
+### addOrderRelation
+If your corpus contains more than one primary text tier, you need order relations between the tokens of your corpus, therefore the default value of the property addOrderRelation is set to true. Otherwise if your corpus contains only one primary text tier the order of the tokens of your corpus is set automatically and you can set this property to false. If your corpus only contains one, empty primary text tier you *need* to set the property addOrderRelation to false.
+
 
 ## Contribute
 Since this Pepper module is under a free license, please feel free to fork it from github and improve the module. If you even think that others can benefit from your improvements, don't hesitate to make a pull request, so that your changes can be merged.

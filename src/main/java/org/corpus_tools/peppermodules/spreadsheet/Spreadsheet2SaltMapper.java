@@ -381,7 +381,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 								// + "\"\t primText: \"" +
 								// headerRow.getCell(primText).toString() +
 								// "\"\t line: "+ currAnno);
-								SpreadsheetImporter.logger.error("Segmentation error: The segmantation of the tier \""
+								SpreadsheetImporter.logger.error("Segmentation error: The segmentation of the tier \""
 										+ headerRow.getCell(annoTier).toString() + "\" in the document: \""
 										+ getResourceURI().lastSegment() + "\" in line: " + currAnno
 										+ " does not match to its primary text: \""
