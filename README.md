@@ -99,7 +99,7 @@ Furthermore imagine the following Spreadsheet data:
 	<tr><td>.</td><td>.</td><td>a6</td></tr>
 </table>
 
-with the property "primText" set to "prim1, primNorm" this sample contains two primary texts "This is an ex- ample ." and "This is an example .".
+with the property "primText" set to "prim1, primNorm" this sample contains two primary texts "This is an ex- ample ." and "This is an example ."
 Now for each cell in both annotation tiers, a token in Salt is created. That means for this sample, the Salt model contains exactly 11 tokens: 6 tokens connected to the first primary text "prim1" and 5 tokens connected to the second primary text "primNorm". To bring the tokens of both primary texts into a relation, the line number of the Spreadsheet model is mapped to a timeline in the Salt model.
 
 
@@ -142,12 +142,12 @@ The table contains an overview of all usable properties to customize the behavio
 |corpusSheet	       |String											             |optional            |	[first sheet] |
 |primText			   |primaryTier1, primaryTier2, ...    					         |optional            |	tok |
 |metaSheet			   |String			                                             |optional            |	[second sheet] |
+|shortAnnoPrimRel  	   |primaryText1>{tier1, tier2, tier3}, primaryText2>{tier4}, ... |optional              |	null |
 |annoPrimRel           |anno1>anno1[primaryTier1], anno2>anno2[primaryTier1], ...		 |optional            |	null |
 |setLayer			   |categoryName>{tier1, tier2, tier3}, categoryName2>{tier4}, ... |optional            |	null |
 |metaAnnotation		   |Boolean	                                                     |optional            |	true |
 |includeEmptyPrimCells |Boolean	                                                     |optional            |	false |
 |addOrderRelation  	   |Boolean	                                                     |optional            |	true |
-
 
 ### corpusSheet
 With the property corpusSheet you can define the sheet that holds the actual corpus information. If you do not set this property, the first sheet will allways be interpreted as the sheet that holds the primary text.
@@ -173,9 +173,14 @@ metaSheet=”SHEET_NAME”
 ### annoPrimRel
 In multi-level corpora you need to specify which annotation tier refers to which primary text tier. Therefor the annotation tier name is either followed by the name of the tier, that holds the primary text in square brackets in the annotation itself (in this case you don't need this property), or you set this specification with the property annoPrimRel. A possible key-value set could be:
 ```
-annoPrimRel=”ANNOTATION_NAME>ANNOTATION_NAME[PRIMARY_TEXT1],ANNOTATION_NAME2>ANNOTATION_NAME2[PRIMARY_TEXT2],...”
+annoPrimRel=”ANNOTATION_NAME=ANNOTATION_NAME[PRIMARY_TEXT1],ANNOTATION_NAME2=ANNOTATION_NAME2[PRIMARY_TEXT2],...”
 ```
 
+### shortAnnoPrimRel
+This property provides a shorter way to specify, which annotation refers to which primary text, therefore you write the primary text, followed by its annotations
+```
+shortAnnoPrimRel=”PRIMARY_TEXT_NAME={ANNOTATION_NAME1,ANNOTATION_NAME2,...}”
+```
 
 ### setLayer
 Sometimes it is desirable to add linguistical categories to your corpus, e.g. to get a better overview, for this purpose you can use the property setLayer.
@@ -192,7 +197,7 @@ Imagine the following sample:
 
 after mapping with the properties: 
 ```
-primText=”prim1, primNorm” annoPrimRel=”anno1>anno1[prim1], anno2>anno2[primNorm]” setLayer=”transcription>{prim1, primNorm}, morphology{anno1, anno2}” 
+primText=”prim1, primNorm” annoPrimRel=”anno1=anno1[prim1], anno2=anno2[primNorm]” setLayer=”transcription={prim1, primNorm}, morphology{anno1, anno2}” 
 ```
 prim1 and primNorm will interpreted as primary texts, whereas anno1 is an annotation of prim1 and anno2 is an annotation of primNorm.
 Here we grouped the annotations of the tiers prim1 and primNorm to one SLayer object named transcription and we grouped the annotations of the tiers anno1 and anno2 to another SLayer object named morphology.
