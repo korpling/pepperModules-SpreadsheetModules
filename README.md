@@ -95,7 +95,7 @@ Furthermore imagine the following Spreadsheet data:
 	<tr><td>is</td><td>is</td><td>a2</td></tr>
 	<tr><td>an</td><td>an</td><td>a3</td></tr>
 	<tr><td>ex-</td><td rowspan="2">example</td><td>a4</td></tr>
-	<tr><td>sample</td><td>a5</td></tr>
+	<tr><td>ample</td><td>a5</td></tr>
 	<tr><td>.</td><td>.</td><td>a6</td></tr>
 </table>
 
@@ -113,7 +113,7 @@ Along with tokens annotations are also modeled as columns in a spreadsheet as sh
 	<tr><td>is</td><td>is</td><td>a12</td><td>a22</td></tr>
 	<tr><td>an</td><td>an</td><td>a13</td><td>a23</td></tr>
 	<tr><td>ex-</td><td rowspan="2">example</td></td><td>a14</td><td rowspan="2">a24</td></tr>
-	<<tr><td>sample</td><td>a15</td></tr>
+	<<tr><td>ample</td><td>a15</td></tr>
 	<tr><td>.</td><td>.</td><td>a16</td><td>a25</td></tr>
 </table>
 
@@ -125,7 +125,7 @@ whereas 'anno1' and 'anno2' are annotation tiers and 'prim1' and 'primNorm' are 
 	<tr><td>is</td><td>is</td><td>a12</td><td>a22</td></tr>
 	<tr><td>an</td><td>an</td><td>a13</td><td>a23</td></tr>
 	<tr><td>ex-</td><td rowspan="2">example</td><td>a14</td><td rowspan="2">a24</td></tr>
-	<tr><td>sample</td><td>a15</td></tr>
+	<tr><td>ample</td><td>a15</td></tr>
 	<tr><td>.</td><td>.</td><td>a16</td><td>a25</td></tr>
 </table>
 
@@ -191,7 +191,7 @@ Imagine the following sample:
 	<tr><td>is</td><td>is</td><td>a12</td><td>a22</td></tr>
 	<tr><td>an</td><td>an</td><td>a13</td><td>a23</td></tr>
 	<tr><td>ex-</td><td rowspan="2">example</td><td>a14</td><td rowspan="2">a24</td></tr>
-	<<tr><td>sample</td><td>a15</td></tr>
+	<<tr><td>ample</td><td>a15</td></tr>
 	<tr><td>.</td><td>.</td><td>a16</td><td>a25</td></tr>
 </table>
 
