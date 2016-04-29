@@ -585,11 +585,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	}
 
 	private void setDocMetaData(Workbook workbook) {
-		Sheet metaSheet;
+		Sheet metaSheet = null;
 
 		// default ("Tabelle2"/ second sheet)
 		if (getProps().getMetaSheet().equals("Tabelle2")) {
-			metaSheet = workbook.getSheetAt(1);
+			if(workbook.getNumberOfSheets() > 1) {
+				metaSheet = workbook.getSheetAt(1);
+			}
 		} else {
 			// get corpus sheet by name
 			metaSheet = workbook.getSheet(getProps().getCorpusSheet());
