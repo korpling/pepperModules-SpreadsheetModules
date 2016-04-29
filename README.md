@@ -142,9 +142,9 @@ The table contains an overview of all usable properties to customize the behavio
 |corpusSheet	       |String											             |optional            |	[first sheet] |
 |primText			   |primaryTier1, primaryTier2, ...    					         |optional            |	tok |
 |metaSheet			   |String			                                             |optional            |	[second sheet] |
-|shortAnnoPrimRel  	   |primaryText1>{tier1, tier2, tier3}, primaryText2>{tier4}, ... |optional              |	null |
-|annoPrimRel           |anno1>anno1[primaryTier1], anno2>anno2[primaryTier1], ...		 |optional            |	null |
-|setLayer			   |categoryName>{tier1, tier2, tier3}, categoryName2>{tier4}, ... |optional            |	null |
+|shortAnnoPrimRel  	   |primaryText1={tier1, tier2, tier3}, primaryText2={tier4}, ... |optional              |	null |
+|annoPrimRel           |anno1=anno1[primaryTier1], anno2=anno2[primaryTier1], ...		 |optional            |	null |
+|setLayer			   |categoryName={tier1, tier2, tier3}, categoryName2={tier4}, ... |optional            |	null |
 |metaAnnotation		   |Boolean	                                                     |optional            |	true |
 |includeEmptyPrimCells |Boolean	                                                     |optional            |	false |
 |addOrderRelation  	   |Boolean	                                                     |optional            |	true |
