@@ -511,7 +511,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							annoPrimNew = primAnnoPair.get(0);
 						}
 					}
-					System.out.println(currentTier +", " +annoPrimNew);
 				}
 			}
 		}
