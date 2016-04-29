@@ -25,6 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -37,11 +40,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.corpus_tools.pepper.modules.PepperModuleProperty;
+import org.corpus_tools.pepper.testFramework.PepperTestUtil;
 import org.corpus_tools.peppermodules.spreadsheet.Spreadsheet2SaltMapper;
 import org.corpus_tools.peppermodules.spreadsheet.SpreadsheetImporterProperties;
 import org.corpus_tools.salt.SaltFactory;
+import org.corpus_tools.salt.common.SDocumentGraph;
+import org.corpus_tools.salt.common.SSpan;
+import org.corpus_tools.salt.common.SToken;
 import org.eclipse.emf.common.util.URI;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -85,6 +93,55 @@ public class Spreadsheet2SaltMapperTest {
 		outStream.flush();
 		outStream.close();
 	}
+	
+	private void map(String testFileName)
+			throws FileNotFoundException, UnsupportedEncodingException {
+		
+		File resourceDir = new File(PepperTestUtil.getTestResources());
+		File testExcelFile = new File(resourceDir, testFileName);
+		
+		this.getFixture().setResourceURI(
+				URI.createFileURI(testExcelFile.getAbsolutePath()));
+		this.getFixture().mapSDocument();
+	}
+
+	@Test
+	public void testSimpleSpan() throws FileNotFoundException, UnsupportedEncodingException {
+		
+		map("simpleSpan.xlsx");
+		
+		SDocumentGraph g = getFixture().getDocument().getDocumentGraph();
+		List<SSpan> spans = g.getSpans();
+		
+		assertEquals(2, spans.size());
+		
+		assertNotNull(spans.get(0).getAnnotation("span"));
+		assertEquals("anno1", spans.get(0).getAnnotation("span").getValue_STEXT());
+		List<SToken> overlapped = g.getOverlappedTokens(spans.get(0));
+		assertEquals(3, overlapped.size());
+		Set<String> overlappedNames = new HashSet<>();
+		for(SToken o : overlapped) {
+			overlappedNames.add(o.getName());
+		}
+		Assert.assertTrue(overlappedNames.contains("sTok1"));
+		Assert.assertTrue(overlappedNames.contains("sTok2"));
+		Assert.assertTrue(overlappedNames.contains("sTok3"));
+		
+		
+		assertNotNull(spans.get(1).getAnnotation("span"));
+		assertEquals("anno2", spans.get(1).getAnnotation("span").getValue_STEXT());
+		
+		overlapped = g.getOverlappedTokens(spans.get(1));
+		assertEquals(2, overlapped.size());
+		overlappedNames = new HashSet<>();
+		for(SToken o : overlapped) {
+			overlappedNames.add(o.getName());
+		}
+		Assert.assertTrue(overlappedNames.contains("sTok5"));
+		Assert.assertTrue(overlappedNames.contains("sTok6"));
+		
+	}
+	
 
 	private void createFirstXlsSample() throws IOException {
 
