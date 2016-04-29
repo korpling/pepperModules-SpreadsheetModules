@@ -135,7 +135,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			for(CellRangeAddress cell : mergedCells) {
 				// add each underlying row/column of the range
 				for(int i=cell.getFirstRow(); i <= cell.getLastRow(); i++) {
-					for(int j=cell.getFirstColumn(); j < cell.getLastColumn(); j++) {
+					for(int j=cell.getFirstColumn(); j <= cell.getLastColumn(); j++) {
 						idx.put(i, j, cell);
 					}
 				}
