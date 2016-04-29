@@ -129,8 +129,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	private Table<Integer, Integer, CellRangeAddress> calculateMergedCellIndex(
 			List<CellRangeAddress> mergedCells) {
 		
-		Table<Integer, Integer, CellRangeAddress> idx = HashBasedTable.create();
-		
+		Table<Integer, Integer, CellRangeAddress> idx = HashBasedTable.create();		
 		if(mergedCells != null) {
 			for(CellRangeAddress cell : mergedCells) {
 				// add each underlying row/column of the range
@@ -140,8 +139,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					}
 				}
 			}
-		}
-		
+		}		
 		return Tables.unmodifiableTable(idx);
 	}
 
@@ -250,7 +248,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 		final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
 		final Table<Integer, Integer, CellRangeAddress> mergedCells = 
 				calculateMergedCellIndex(corpusSheet.getMergedRegions());
-	  
+		
+		// use formater to ensure that e.g. integers will not be converted into decimals
 		DataFormatter formatter = new DataFormatter();
 		// save all tokens of the current primary text
 		List<SToken> currentTokList = new ArrayList<>();
@@ -279,7 +278,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 				// iterate through all rows of the given corpus sheet
 
 				Row row = corpusSheet.getRow(currRow);
-
 				Cell primCell = row.getCell(primText);
 				SToken currTok = null;
 				int endCell = currRow;
@@ -372,15 +370,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 							List<SToken> tokenOfSpan = new ArrayList<>();
 
 							if(sTokens == null) {
-								// TODO: replace error message by the line
-								// underneath
-								// SpreadsheetImporter.logger.error("Segmentation
-								// error in doc: \"" +
-								// getResourceURI().lastSegment() + "\"\t anno:
-								// \"" + headerRow.getCell(annoTier).toString()
-								// + "\"\t primText: \"" +
-								// headerRow.getCell(primText).toString() +
-								// "\"\t line: "+ currAnno);
 								SpreadsheetImporter.logger.error("Segmentation error: The segmentation of the tier \""
 										+ headerRow.getCell(annoTier).toString() + "\" in the document: \""
 										+ getResourceURI().lastSegment() + "\" in line: " + currAnno
@@ -488,12 +477,17 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 	 * @param currentTier
 	 */
 	private String getPrimOfAnnoPrimRel(String currentTier) {
-		String annoPrimRel = getProps().getAnnoPrimRel();
 		String annoPrimNew = null;
+		
+		// check if both properties where used
+		if(getProps().getAnnoPrimRel() != null && getProps().getShortAnnoPrimRel() != null){
+			SpreadsheetImporter.logger.error("Wrong property handling. Please use only one property to specify which annotation refers to which primary text tier (exclusive use of either 'annoPrimRel' or 'shortAnnoPrimRel').");
+		} else{
+		String annoPrimRel = getProps().getAnnoPrimRel();
 		if (annoPrimRel != null) {
 			List<String> annoPrimRelation = Arrays.asList(annoPrimRel.split("\\s*,\\s*"));
 			for (String annoPrim : annoPrimRelation) {
-				String[] splitted = annoPrim.split(">", 2);
+				String[] splitted = annoPrim.split("=", 2);
 				if(splitted.length > 1 ) {
 					String annoName = splitted[0];
 					String annoPrimCouple = splitted[1];
@@ -501,6 +495,23 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					if (annoName.equals(currentTier)) {
 						annoPrimNew = annoPrimCouple.split("\\[")[1].replace("]", "");
 					}
+				}
+			}
+		}
+		String shortAnnoPrimRel = getProps().getShortAnnoPrimRel();
+		if(shortAnnoPrimRel != null){
+		
+			List<String> shortAnnoPrimRelation = Arrays.asList(shortAnnoPrimRel.split("\\s*},\\s*"));
+			for (String annoPrim : shortAnnoPrimRelation) {
+				List<String> primAnnoPair = Arrays.asList(annoPrim.split("="));
+				String[] annos = primAnnoPair.get(1).split("\\s*,\\s*");
+				
+					for(String anno : annos){
+						if (anno.replace("}", "").replace("{", "").equals(currentTier)){
+							annoPrimNew = primAnnoPair.get(0);
+						}
+					}
+					System.out.println(currentTier +", " +annoPrimNew);
 				}
 			}
 		}
@@ -560,7 +571,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 			// System.out.println(annoLayerCoupleList);
 
 			for (String annoLayer : annoLayerCoupleList) {
-				List<String> annoLayerPair = Arrays.asList(annoLayer.split(">"));
+				List<String> annoLayerPair = Arrays.asList(annoLayer.split("="));
 
 				SLayer sLayer = SaltFactory.createSLayer();
 				sLayer.setName(annoLayerPair.get(0));

@@ -656,7 +656,7 @@ public class Spreadsheet2SaltMapperTest {
 				.setValue("tok, tok2");
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
-				.setValue("anno1>anno1[tok], anno2>anno2[tok2]");
+				.setValue("anno1=anno1[tok], anno2=anno2[tok2]");
 		((PepperModuleProperty<Boolean>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
 				.setValue(false);
@@ -704,7 +704,7 @@ public class Spreadsheet2SaltMapperTest {
 				.setValue("tok, tok2");
 		((PepperModuleProperty<String>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
-				.setValue("anno1>anno1[tok], anno2>anno2[tok2], lb>lb[tok]");
+				.setValue("anno1=anno1[tok], anno2=anno2[tok2], lb=lb[tok]");
 		((PepperModuleProperty<Boolean>) getFixture().getProperties()
 				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
 				.setValue(false);
@@ -743,10 +743,10 @@ public class Spreadsheet2SaltMapperTest {
 //				.setValue("tok, tok2");
 //		((PepperModuleProperty<String>) getFixture().getProperties()
 //				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
-//				.setValue("anno1>anno1[tok], anno2>anno2[tok2]");
+//				.setValue("anno1=anno1[tok], anno2=anno2[tok2]");
 //		((PepperModuleProperty<String>) getFixture().getProperties()
 //				.getProperty(SpreadsheetImporterProperties.PROP_SET_LAYER))
-//				.setValue("textual>{tok, tok2}, morphologigal>{anno1, anno2}, graphical>{lb}");
+//				.setValue("textual={tok, tok2}, morphologigal={anno1, anno2}, graphical={lb}");
 //		start(getFixture(), outStream.toString());
 //
 //		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayers());
@@ -755,4 +755,55 @@ public class Spreadsheet2SaltMapperTest {
 //		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("graphical"));
 //		assertEquals(3, getFixture().getDocument().getDocumentGraph().getLayers().size());
 //	}
+	
+	@Test
+	public void testPrimAnnoRelEquality() throws ParserConfigurationException, SAXException, IOException, XMLStreamException {
+		// TODO: check for Spans in relation to their annotations rather than their primary text layers.
+		createThirdXlsxSample();
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
+				.setValue("ThirdXlsxSample");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
+				.setValue("tok, tok2");
+//		((PepperModuleProperty<String>) getFixture().getProperties()
+//				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
+//				.setValue("anno1=anno1[tok], anno2=anno2[tok2]");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_SHORT_PRIM_REL))
+				.setValue("tok={anno1}, tok2={anno2}");
+		((PepperModuleProperty<Boolean>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_META_ANNO))
+				.setValue(false);
+		
+		start(getFixture(), outStream.toString());
+
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
+//		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
+//		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
+//		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());
+		assertEquals(9, getFixture().getDocument().getDocumentGraph().getOrderRelations().size());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(0), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(0).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(1), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(0).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(1), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(1).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(2), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(1).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(2), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(2).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(3), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(2).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(3), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(3).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(4), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(3).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(5), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(4).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(6), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(4).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(6), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(5).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(7), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(5).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(7), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(6).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(8), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(6).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(8), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(7).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(9), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(7).getTarget());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(9), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getSource());
+		assertEquals(getFixture().getDocument().getDocumentGraph().getTokens().get(10), getFixture().getDocument().getDocumentGraph().getOrderRelations().get(8).getTarget());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getTimeline());
+//		assertEquals(11, getFixture().getDocument().getDocumentGraph().getTimelineRelations().size());
+	}
 }
