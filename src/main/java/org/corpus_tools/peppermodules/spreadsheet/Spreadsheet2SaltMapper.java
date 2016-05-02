@@ -72,7 +72,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 	@Override
 	public DOCUMENT_STATUS mapSDocument() {
-
 		URI resourceURI = getResourceURI();
 		String resource = resourceURI.path();
 		readSpreadsheetResource(resource);
@@ -80,6 +79,14 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		return DOCUMENT_STATUS.COMPLETED;
 	}
 
+	/**
+	 * open document, create document graph and timeline in salt, print logging
+	 * infos, throw warning, if there are any problems while handling the
+	 * document
+	 * 
+	 * @param resource
+	 *            string of the document path
+	 */
 	private void readSpreadsheetResource(String resource) {
 		getDocument().setDocumentGraph(SaltFactory.createSDocumentGraph());
 
@@ -149,10 +156,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	}
 
 	/**
-	 * get the primary text tiers of the given document
+	 * get the primary text tiers and the annotations with their belonging
+	 * primary text of the given document
 	 * 
 	 * @param workbook
-	 *            of the excel file
+	 * @param timeline
 	 */
 	private void getPrimTextTiers(Workbook workbook, STimeline timeline) {
 		// get all primary text tiers
@@ -216,7 +224,15 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								// save all indexes of tier containing primary
 								// text
 								primTextPos.add(currColumn);
-							} else {
+							}
+							// TODO: move following code into a seperate method
+							// and handle annotations independent of their
+							// primary text
+							// TODO: first get all annotated refferences between
+							// annotations and their primary text, add/
+							// overwrite references with properties afterwards
+							// and print a warning if a reference is overwritten
+							else {
 								// current tier contains (other) annotations
 								if (getPrimOfAnnoPrimRel(tierName) != null) {
 									// current tier is an annotation and the
@@ -236,7 +252,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 											headerRow);
 
 								} else if (primaryTextTierList.size() == 1
-										&& getProps().getAnnoPrimRel() == null) {
+										&& getProps().getAnnoPrimRel() == null
+										&& getProps().getShortAnnoPrimRel() == null) {
 									// There is only one primary text so we can
 									// safely assume this is the one
 									// the annotation is connected to.
@@ -262,10 +279,14 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					}
 				}
 
-				if (primTextPos != null) {
-
+				if (!primTextPos.isEmpty()) {
 					setPrimText(corpusSheet, primTextPos, annoPrimRelations,
 							headerRow);
+				} else {
+					SpreadsheetImporter.logger
+							.warn("No primary text for the document \""
+									+ getResourceURI().lastSegment()
+									+ "\" found. Please check the spelling of ");
 				}
 			}
 			if (getProps().getMetaAnnotation()) {
@@ -709,8 +730,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				Cell metaKey = row.getCell(0);
 				Cell metaValue = row.getCell(1);
 
-				if (metaKey != null && !metaKey.toString().equals("")) {
-					if (metaValue != null && !metaValue.toString().equals("")) {
+				if (metaKey != null && !metaKey.toString().isEmpty()) {
+					if (metaValue != null && !metaValue.toString().isEmpty()) {
 						if (getDocument().getMetaAnnotation(metaKey.toString()) == null) {
 							getDocument().createMetaAnnotation(null,
 									formatter.formatCellValue(metaKey),
@@ -726,6 +747,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 						SpreadsheetImporter.logger
 								.warn("No value for the meta data: \""
 										+ metaKey.toString() + "\" found.");
+					}
+				} else {
+					if (metaValue != null && !metaValue.toString().isEmpty()) {
+						SpreadsheetImporter.logger
+								.warn("No meta annotation name for the value \""
+										+ metaValue.toString() + "\" found.");
 					}
 				}
 				currRow++;
