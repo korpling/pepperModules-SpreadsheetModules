@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.corpus_tools.pepper.common.DOCUMENT_STATUS;
 import org.corpus_tools.pepper.impl.PepperMapperImpl;
 import org.corpus_tools.pepper.modules.PepperMapper;
@@ -182,8 +183,21 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 					// that hold the primary data
 
 					int currColumn = 0;
-					while (currColumn < headerRow.getLastCellNum() && headerRow.getCell(currColumn) != null
-							&& !headerRow.getCell(currColumn).toString().equals("")) {
+
+					List<String> emptyColumnList = new ArrayList<>();
+					while (currColumn < headerRow.getPhysicalNumberOfCells()) {
+						if(headerRow.getCell(currColumn) == null || headerRow.getCell(currColumn).toString().isEmpty()){
+							String emptyColumn = CellReference.convertNumToColString(currColumn);
+							emptyColumnList.add(emptyColumn);
+							currColumn++;
+							continue;
+						} else {
+							if(!emptyColumnList.isEmpty()){
+								for (String emptyColumn : emptyColumnList){
+									SpreadsheetImporter.logger.warn("Column \"" + emptyColumn + "\" in document \""+ getResourceURI().lastSegment() + "\" has no name.");
+								}
+								emptyColumnList = new ArrayList<>();
+							}
 						String tierName = headerRow.getCell(currColumn).toString();
 						if (primaryTextTierList.contains(tierName)) {
 							// current tier contains primary text
@@ -206,11 +220,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
 								// the annotation is connected to.
 								setAnnotationPrimCouple(primaryTextTierList.get(0), annoPrimRelations, currColumn, headerRow);
 							} else {
+								String emptyColumn = CellReference.convertNumToColString(currColumn);
 								SpreadsheetImporter.logger
-										.warn("No primary text for the annotation '" + tierName + "' given.");
+										.warn("No primary text for the annotation '" + tierName + "' in document '" + getResourceURI().lastSegment() + "' given (column: "+ emptyColumn +").");
 							}
 						}
 						currColumn++;
+						}
 					}
 				}
 
