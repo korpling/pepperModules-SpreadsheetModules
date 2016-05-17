@@ -156,8 +156,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	}
 
 	/**
-	 * get the primary text tiers and the annotations with their belonging
-	 * primary text of the given document
+	 * get the primary text tiers and their annotations of the given document
 	 * 
 	 * @param workbook
 	 * @param timeline
@@ -225,35 +224,28 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								// text
 								primTextPos.add(currColumn);
 							}
-							// TODO: move following code into a seperate method
-
-							// TODO: first get all annotated refferences between
-							// annotations and their primary text, add/
-							// overwrite references with properties afterwards
-							// and print a warning if a reference is overwritten
 							else {
-								// TODO: write a function to map different writings (pos[dipl] and property setting)
+								// current tier contains (other) annotations
 								if (tierName.matches(".+\\[.+\\]")
 										|| getProps().getAnnoPrimRel() != null
 										|| getProps().getShortAnnoPrimRel() != null) {
-									// current tier contains (other) annotations
+
 									if (tierName.matches(".+\\[.+\\]")) {
 										// the belonging primary text was set by
-										// the
-										// annotator
+										// the annotator
 										String primTier = tierName.split("\\[")[1]
 												.replace("]", "");
 										setAnnotationPrimCouple(primTier,
 												annoPrimRelations, currColumn,
 												headerRow);
-
 									}
-									if (getPrimOfAnnoPrimRel(tierName) != null) {
+
+									if (getPrimOfAnnoPrimRel(tierName.split("\\[")[0]) != null) {
 										// current tier is an annotation and the
 										// belonging primary text was set by
 										// property
 										setAnnotationPrimCouple(
-												getPrimOfAnnoPrimRel(tierName),
+												getPrimOfAnnoPrimRel(tierName.split("\\[")[0]),
 												annoPrimRelations, currColumn,
 												headerRow);
 									}
@@ -298,13 +290,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					SpreadsheetImporter.logger
 							.warn("No primary text for the document \""
 									+ getResourceURI().lastSegment()
-									+ "\" found. Please check the spelling of ");
+									+ "\" found. Please check the spelling of your properties.");
 				}
 
-				// TODO: insert function "setAnnotations(param)" with if
-				// statement for relatable primary text (maybe write a function
-				// for primary text - annotation realtion), if no primary text
-				// is given for the actual annotation print a warning.
 				setAnnotations(annoPrimRelations, corpusSheet, mergedCells,
 						layerTierCouples, progressTotalNumberOfColumns);
 			}
@@ -314,6 +302,14 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		}
 	}
 
+	/**
+	 * Add annotations to the salt graph
+	 * @param annoPrimRelations
+	 * @param corpusSheet
+	 * @param mergedCells
+	 * @param layerTierCouples
+	 * @param progressProcessedNumberOfColumns
+	 */
 	private void setAnnotations(HashMap<Integer, Integer> annoPrimRelations,
 			Sheet corpusSheet,
 			Table<Integer, Integer, CellRangeAddress> mergedCells,
@@ -328,14 +324,15 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				SSpan annoSpan = null;
 				int currAnno = 1;
-
+				String annoName = headerRow.getCell(annoTier).toString();
 				while (currAnno < corpusSheet.getPhysicalNumberOfRows()) {
 					Row row = corpusSheet.getRow(currAnno);
 					Cell annoCell = row.getCell(annoTier);
 
-					if (annoCell != null && !annoCell.toString().equals("")) {
+					if (annoCell != null && !annoCell.toString().isEmpty()) {
 						String annoText = "";
 						annoText = formatter.formatCellValue(annoCell);
+						
 						int annoStart = currAnno - 1;
 						int annoEnd = getLastCell(annoCell, mergedCells);
 						DataSourceSequence<Integer> sequence = new DataSourceSequence<Integer>();
@@ -380,16 +377,18 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 						annoSpan = getDocument().getDocumentGraph().createSpan(
 								tokenOfSpan);
-
+						
 						if (annoSpan != null
-								&& headerRow.getCell(annoTier) != null
-								&& !headerRow.getCell(annoTier).toString()
-										.equals("")) {
+								&& annoName != null
+								&& !annoName.isEmpty()) {
+							// remove primary text info of annotation if given
+							if(annoName.matches(".+\\[.+\\]")){
+								annoName = annoName.split("\\[")[0];
+							}
 							annoSpan.createAnnotation(null,
-									headerRow.getCell(annoTier).toString(),
+									annoName,
 									annoText);
-							annoSpan.setName(headerRow.getCell(annoTier)
-									.toString());
+							annoSpan.setName(annoName);
 						}
 
 					}
@@ -399,10 +398,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				if (getProps().getLayer() != null && annoSpan != null) {
 
 					if (layerTierCouples.size() > 0) {
-						if (layerTierCouples.get(headerRow.getCell(annoTier)
-								.toString()) != null) {
-							SLayer sLayer = layerTierCouples.get(headerRow
-									.getCell(annoTier).toString());
+						if (layerTierCouples.get(annoName) != null) {
+							SLayer sLayer = layerTierCouples.get(annoName);
 							getDocument().getDocumentGraph().addLayer(sLayer);
 							sLayer.addNode(annoSpan);
 						}
@@ -568,10 +565,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	 * @param annoPrimRelations
 	 * @param currColumn
 	 */
-	// TODO: use the annotation tier as key and the primary text as value, there
-	// should only be a key-single-value-pair for each annotation, if there is
-	// allready an entry for the annotation tier, overwrite the old
-	// value with the new one, print a warning
 	private void setAnnotationPrimCouple(String primTier,
 			HashMap<Integer, Integer> annoPrimRelations, int currColumn,
 			Row headerRow) {
@@ -579,26 +572,24 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		if (getColumn(primTier, headerRow) != null) {
 			int primData = getColumn(primTier, headerRow);
 			if (annoPrimRelations.get(currColumn) != null) {
-				System.out.println("AHA!");
 				SpreadsheetImporter.logger
 						.warn("The annotation \""
-								+ headerRow.getCell(currColumn).toString()
-								+ "\" was allready referenced to the primary text \""
+								+ headerRow.getCell(currColumn).toString().split("\\[")[0]
+								+ "\" was allready referenced to the primary text in column \""
 								+ annoPrimRelations.get(currColumn)
 								+ "\". This reference was overwritten. The new primary text for \""
-								+ headerRow.getCell(currColumn) + "\" is \""
+								+ headerRow.getCell(currColumn).toString().split("\\[")[0] + "\" is \""
 								+ headerRow.getCell(primData) + "\".");
 				annoPrimRelations.remove(currColumn);
 				annoPrimRelations.put(currColumn, primData);
 			} else {
 				annoPrimRelations.put(currColumn, primData);
-			}		
+			}
+		} else {
+			SpreadsheetImporter.logger.warn("The primary text \"" + primTier
+					+ "\" does not exist in the document \""
+					+ getResourceURI().lastSegment() + "\".");
 		}
-//		for(int anno: annoPrimRelations.keySet()){
-//			System.out.println("anno in column " + CellReference
-//										.convertNumToColString(anno) + ", prim in column " + CellReference
-//										.convertNumToColString(annoPrimRelations.get(anno)));
-//		}
 	}
 
 	/**
@@ -620,8 +611,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	}
 
 	/**
-	 * rename the annotation tier, so that the primary text, that the annotation
-	 * tier refers to, is written behind the actual tier name
+	 * get the primary text of the annotation tier
 	 * 
 	 * @param currentTier
 	 */
