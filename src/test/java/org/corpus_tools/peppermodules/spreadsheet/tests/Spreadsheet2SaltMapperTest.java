@@ -356,7 +356,7 @@ public class Spreadsheet2SaltMapperTest {
 
 		Row xlsRow5 = xlsxSheet.createRow(4);
 		Cell xlsCell51 = xlsRow5.createCell(0);
-		xlsCell51.setCellValue("ex-Fucking-ample");
+		xlsCell51.setCellValue("example");
 		Cell xlsCell52 = xlsRow5.createCell(1);
 		xlsCell52.setCellValue("noun1");
 		Cell xlsCell53 = xlsRow5.createCell(2);
@@ -443,7 +443,7 @@ public class Spreadsheet2SaltMapperTest {
 
 		Row xlsRow5 = xlsxSheet.createRow(4);
 		Cell xlsCell51 = xlsRow5.createCell(0);
-		xlsCell51.setCellValue("ex-Fucking-ample");
+		xlsCell51.setCellValue("example");
 		Cell xlsCell52 = xlsRow5.createCell(1);
 		xlsCell52.setCellValue("noun1");
 		Cell xlsCell53 = xlsRow5.createCell(2);
@@ -722,7 +722,7 @@ public class Spreadsheet2SaltMapperTest {
 
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
-//		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
+//		assertEquals("This is an example .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
 //		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
 //		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());
@@ -768,15 +768,31 @@ public class Spreadsheet2SaltMapperTest {
 		
 		start(getFixture(), outStream.toString());
 
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
-//		assertEquals(13, getFixture().getDocument().getDocumentGraph().getSpans().size());
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(1));
-//		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(1)));
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(3));
-//		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(3)));
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getAnnotations());
-//		assertEquals(2, getFixture().getDocument().getDocumentGraph().getTokens().get(0).getAnnotations().size());
-//		assertEquals("lb", getFixture().getDocument().getDocumentGraph().getSpans().get(1).getAnnotation("lb").getValue());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
+		assertEquals(11, getFixture().getDocument().getDocumentGraph().getSpans().size());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
+		assertEquals("This", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(1));
+		assertEquals("is", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(1)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
+		assertEquals("an", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(3));
+		assertEquals("example", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(3)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(4));
+		assertEquals(".", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(4)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(5));
+		assertEquals("This", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(5)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(6));
+		assertEquals("is", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(6)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(7));
+		assertEquals("an", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(7)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(8));
+		assertEquals("ex- ample", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(8)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(9));
+		assertEquals(".", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(9)));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(10));
+//		assertEquals(1, getFixture().getDocument().getDocumentGraph().getTokens().get(0).getAnnotations().size());
+//		assertEquals("pron1", getFixture().getDocument().getDocumentGraph().getSpans().get(1).getAnnotation("anno1").getValue());
 //		assertEquals("pron1", getFixture().getDocument().getDocumentGraph().getSpans().get(2).getAnnotation("anno1").getValue());
 //		assertEquals("verb1", getFixture().getDocument().getDocumentGraph().getSpans().get(3).getAnnotation("anno1").getValue());
 //		assertEquals("art1", getFixture().getDocument().getDocumentGraph().getSpans().get(4).getAnnotation("anno1").getValue());
@@ -789,29 +805,32 @@ public class Spreadsheet2SaltMapperTest {
 //		assertEquals("punct2", getFixture().getDocument().getDocumentGraph().getSpans().get(12).getAnnotation("anno2").getValue());
 	}
 	
-//	@Test
-//	public void testSLayer() throws IOException {
-//		createThirdXlsxSample();
-//		((PepperModuleProperty<String>) getFixture().getProperties()
-//				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
-//				.setValue("firstSheet");
-//		((PepperModuleProperty<String>) getFixture().getProperties()
-//				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
-//				.setValue("tok, tok2");
-//		((PepperModuleProperty<String>) getFixture().getProperties()
-//				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
-//				.setValue("anno1=anno1[tok], anno2=anno2[tok2]");
-//		((PepperModuleProperty<String>) getFixture().getProperties()
-//				.getProperty(SpreadsheetImporterProperties.PROP_SET_LAYER))
-//				.setValue("textual={tok, tok2}, morphologigal={anno1, anno2}, graphical={lb}");
-//		start(getFixture(), outStream.toString());
-//
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayers());
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("textual"));
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("morphologigal"));
-//		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("graphical"));
-//		assertEquals(3, getFixture().getDocument().getDocumentGraph().getLayers().size());
-//	}
+	@Test
+	public void testSLayer() throws IOException {
+		createFourthXlsxSample();
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_CORPUS_SHEET))
+				.setValue("fourthXlsxSample");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_PRIMARY_TEXT))
+				.setValue("tok, tok2");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_ANNO_REFERS_TO))
+				.setValue("anno1=anno1[tok], anno2=anno2[tok2], lb=lb[tok]");
+		((PepperModuleProperty<String>) getFixture().getProperties()
+				.getProperty(SpreadsheetImporterProperties.PROP_SET_LAYER))
+				.setValue("textual={tok, tok2}, morphologigal={anno1, anno2}, graphical={lb}");
+		start(getFixture(), outStream.toString());
+
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayers());
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("textual"));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("morphologigal"));
+		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("graphical"));
+		assertEquals(3, getFixture().getDocument().getDocumentGraph().getLayers().size());
+		assertEquals(11, getFixture().getDocument().getDocumentGraph().getLayer("textual").getNodes().size());
+		assertEquals(10, getFixture().getDocument().getDocumentGraph().getLayer("morphologigal").getNodes().size());
+		assertEquals(1, getFixture().getDocument().getDocumentGraph().getLayer("graphical").getNodes().size());
+	}
 	
 	@Test
 	public void testPrimAnnoRelEquality() throws ParserConfigurationException, SAXException, IOException, XMLStreamException {
@@ -837,7 +856,7 @@ public class Spreadsheet2SaltMapperTest {
 
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans());
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(0));
-//		assertEquals("This is an ex-Fucking-ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
+//		assertEquals("This is an example .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(0)));
 //		assertNotNull(getFixture().getDocument().getDocumentGraph().getSpans().get(2));
 //		assertEquals("This is an ex- ample .", getFixture().getDocument().getDocumentGraph().getText(getFixture().getDocument().getDocumentGraph().getSpans().get(2)));
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getOrderRelations());

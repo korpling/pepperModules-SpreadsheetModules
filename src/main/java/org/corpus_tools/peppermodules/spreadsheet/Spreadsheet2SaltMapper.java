@@ -324,8 +324,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				SSpan annoSpan = null;
 				int currAnno = 1;
-				String annoName = headerRow.getCell(annoTier).toString();
+				
 				while (currAnno < corpusSheet.getPhysicalNumberOfRows()) {
+					String annoName = headerRow.getCell(annoTier).toString();
 					Row row = corpusSheet.getRow(currAnno);
 					Cell annoCell = row.getCell(annoTier);
 
@@ -390,21 +391,21 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 									annoText);
 							annoSpan.setName(annoName);
 						}
-
 					}
+					
+					if (getProps().getLayer() != null && annoSpan != null) {
 
+						if (layerTierCouples.size() > 0) {
+							if (layerTierCouples.get(annoName) != null) {
+								SLayer sLayer = layerTierCouples.get(annoName);
+								getDocument().getDocumentGraph().addLayer(sLayer);
+								sLayer.addNode(annoSpan);
+							}
+						}
+					}					
 					currAnno++;
 				} // end for each row of annotation
-				if (getProps().getLayer() != null && annoSpan != null) {
-
-					if (layerTierCouples.size() > 0) {
-						if (layerTierCouples.get(annoName) != null) {
-							SLayer sLayer = layerTierCouples.get(annoName);
-							getDocument().getDocumentGraph().addLayer(sLayer);
-							sLayer.addNode(annoSpan);
-						}
-					}
-				}
+				
 				progressProcessedNumberOfColumns++;
 				setProgress((double) progressProcessedNumberOfColumns
 						/ (double) progressTotalNumberOfColumns);
@@ -724,6 +725,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				SLayer sLayer = SaltFactory.createSLayer();
 				sLayer.setName(annoLayerPair.get(0));
+				sLayer.setId(annoLayerPair.get(0));
 				String[] assoAnno = annoLayerPair.get(1).split("\\s*,\\s*");
 				for (String tier : assoAnno) {
 					tier = tier.replace("{", "");
@@ -732,7 +734,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				}
 			}
 		}
-		// TODO: throw an exception, if the syntax of the property is false
+		// TODO: throw an exception, if the syntax of the property is wrong
 		// else {
 		// throw new PepperModuleException(
 		// "Cannot import the given data, because the property file contains a
