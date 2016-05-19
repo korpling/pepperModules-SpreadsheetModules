@@ -827,9 +827,9 @@ public class Spreadsheet2SaltMapperTest {
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("morphologigal"));
 		assertNotNull(getFixture().getDocument().getDocumentGraph().getLayerByName("graphical"));
 		assertEquals(3, getFixture().getDocument().getDocumentGraph().getLayers().size());
-		assertEquals(11, getFixture().getDocument().getDocumentGraph().getLayer("textual").getNodes().size());
-		assertEquals(10, getFixture().getDocument().getDocumentGraph().getLayer("morphologigal").getNodes().size());
-		assertEquals(1, getFixture().getDocument().getDocumentGraph().getLayer("graphical").getNodes().size());
+		assertEquals(11, getFixture().getDocument().getDocumentGraph().getLayerByName("textual").get(0).getNodes().size());
+		assertEquals(10, getFixture().getDocument().getDocumentGraph().getLayerByName("morphologigal").get(0).getNodes().size());
+		assertEquals(1, getFixture().getDocument().getDocumentGraph().getLayerByName("graphical").get(0).getNodes().size());
 	}
 	
 	@Test

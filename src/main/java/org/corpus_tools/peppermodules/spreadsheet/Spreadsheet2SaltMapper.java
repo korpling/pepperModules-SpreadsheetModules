@@ -725,7 +725,6 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				SLayer sLayer = SaltFactory.createSLayer();
 				sLayer.setName(annoLayerPair.get(0));
-				sLayer.setId(annoLayerPair.get(0));
 				String[] assoAnno = annoLayerPair.get(1).split("\\s*,\\s*");
 				for (String tier : assoAnno) {
 					tier = tier.replace("{", "");
