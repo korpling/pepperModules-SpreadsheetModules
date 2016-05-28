@@ -696,7 +696,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	public static STextualDS getTextualDSForNode(SNode node,
 			SDocumentGraph graph) {
 		if (node != null) {
-			List<DataSourceSequence> dataSources = graph
+			List<? extends DataSourceSequence<?>> dataSources = graph
 					.getOverlappedDataSourceSequence(node,
 							SALT_TYPE.STEXT_OVERLAPPING_RELATION);
 			if (dataSources != null) {
