@@ -223,8 +223,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								// save all indexes of tier containing primary
 								// text
 								primTextPos.add(currColumn);
-							}
-							else {
+							} else {
 								// current tier contains (other) annotations
 								if (tierName.matches(".+\\[.+\\]")
 										|| getProps().getAnnoPrimRel() != null
@@ -240,12 +239,14 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 												headerRow);
 									}
 
-									if (getPrimOfAnnoPrimRel(tierName.split("\\[")[0]) != null) {
+									if (getPrimOfAnnoPrimRel(tierName
+											.split("\\[")[0]) != null) {
 										// current tier is an annotation and the
 										// belonging primary text was set by
 										// property
 										setAnnotationPrimCouple(
-												getPrimOfAnnoPrimRel(tierName.split("\\[")[0]),
+												getPrimOfAnnoPrimRel(tierName
+														.split("\\[")[0]),
 												annoPrimRelations, currColumn,
 												headerRow);
 									}
@@ -304,6 +305,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 	/**
 	 * Add annotations to the salt graph
+	 * 
 	 * @param annoPrimRelations
 	 * @param corpusSheet
 	 * @param mergedCells
@@ -324,7 +326,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				SSpan annoSpan = null;
 				int currAnno = 1;
-				
+
 				while (currAnno < corpusSheet.getPhysicalNumberOfRows()) {
 					String annoName = headerRow.getCell(annoTier).toString();
 					Row row = corpusSheet.getRow(currAnno);
@@ -333,7 +335,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 					if (annoCell != null && !annoCell.toString().isEmpty()) {
 						String annoText = "";
 						annoText = formatter.formatCellValue(annoCell);
-						
+
 						int annoStart = currAnno - 1;
 						int annoEnd = getLastCell(annoCell, mergedCells);
 						DataSourceSequence<Integer> sequence = new DataSourceSequence<Integer>();
@@ -378,34 +380,32 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 						annoSpan = getDocument().getDocumentGraph().createSpan(
 								tokenOfSpan);
-						
-						if (annoSpan != null
-								&& annoName != null
+
+						if (annoSpan != null && annoName != null
 								&& !annoName.isEmpty()) {
 							// remove primary text info of annotation if given
-							if(annoName.matches(".+\\[.+\\]")){
+							if (annoName.matches(".+\\[.+\\]")) {
 								annoName = annoName.split("\\[")[0];
 							}
-							annoSpan.createAnnotation(null,
-									annoName,
-									annoText);
+							annoSpan.createAnnotation(null, annoName, annoText);
 							annoSpan.setName(annoName);
 						}
 					}
-					
+
 					if (getProps().getLayer() != null && annoSpan != null) {
 
 						if (layerTierCouples.size() > 0) {
 							if (layerTierCouples.get(annoName) != null) {
 								SLayer sLayer = layerTierCouples.get(annoName);
-								getDocument().getDocumentGraph().addLayer(sLayer);
+								getDocument().getDocumentGraph().addLayer(
+										sLayer);
 								sLayer.addNode(annoSpan);
 							}
 						}
-					}					
+					}
 					currAnno++;
 				} // end for each row of annotation
-				
+
 				progressProcessedNumberOfColumns++;
 				setProgress((double) progressProcessedNumberOfColumns
 						/ (double) progressTotalNumberOfColumns);
@@ -575,11 +575,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 			if (annoPrimRelations.get(currColumn) != null) {
 				SpreadsheetImporter.logger
 						.warn("The annotation \""
-								+ headerRow.getCell(currColumn).toString().split("\\[")[0]
+								+ headerRow.getCell(currColumn).toString()
+										.split("\\[")[0]
 								+ "\" was allready referenced to the primary text in column \""
 								+ annoPrimRelations.get(currColumn)
 								+ "\". This reference was overwritten. The new primary text for \""
-								+ headerRow.getCell(currColumn).toString().split("\\[")[0] + "\" is \""
+								+ headerRow.getCell(currColumn).toString()
+										.split("\\[")[0] + "\" is \""
 								+ headerRow.getCell(primData) + "\".");
 				annoPrimRelations.remove(currColumn);
 				annoPrimRelations.put(currColumn, primData);
@@ -627,37 +629,55 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		} else {
 			String annoPrimRel = getProps().getAnnoPrimRel();
 			if (annoPrimRel != null) {
-				List<String> annoPrimRelation = Arrays.asList(annoPrimRel
-						.split("\\s*,\\s*"));
-				for (String annoPrim : annoPrimRelation) {
-					String[] splitted = annoPrim.split("=", 2);
-					if (splitted.length > 1) {
-						String annoName = splitted[0];
-						String annoPrimCouple = splitted[1];
+				if (annoPrimRel.matches(".+],.+") || annoPrimRel.matches(".+]")) {
+					List<String> annoPrimRelation = Arrays.asList(annoPrimRel
+							.split("\\s*,\\s*"));
+					for (String annoPrim : annoPrimRelation) {
+						String[] splitted = annoPrim.split("=", 2);
+						if (splitted.length > 1) {
+							String annoName = splitted[0];
+							String annoPrimCouple = splitted[1];
 
-						if (annoName.equals(currentTier)) {
-							annoPrimNew = annoPrimCouple.split("\\[")[1]
-									.replace("]", "");
+							if (annoName.equals(currentTier)) {
+								annoPrimNew = annoPrimCouple.split("\\[")[1]
+										.replace("]", "");
+							}
+						} else {
+							SpreadsheetImporter.logger
+									.error("Can not match the annotations to their primary text, because of syntax errors. Please check the syntax of your property settings.");
 						}
 					}
+				} else {
+					SpreadsheetImporter.logger
+							.error("Can not match the annotations to their primary text, because of syntax errors. Please check the syntax of your property settings.");
 				}
 			}
 			String shortAnnoPrimRel = getProps().getShortAnnoPrimRel();
 			if (shortAnnoPrimRel != null) {
-
-				List<String> shortAnnoPrimRelation = Arrays
-						.asList(shortAnnoPrimRel.split("\\s*},\\s*"));
-				for (String annoPrim : shortAnnoPrimRelation) {
-					List<String> primAnnoPair = Arrays.asList(annoPrim
-							.split("="));
-					String[] annos = primAnnoPair.get(1).split("\\s*,\\s*");
-
-					for (String anno : annos) {
-						if (anno.replace("}", "").replace("{", "")
-								.equals(currentTier)) {
-							annoPrimNew = primAnnoPair.get(0);
+				if (shortAnnoPrimRel.matches(".+},.+")
+						|| shortAnnoPrimRel.matches(".+}")) {
+					List<String> shortAnnoPrimRelation = Arrays
+							.asList(shortAnnoPrimRel.split("\\s*},\\s*"));
+					for (String annoPrim : shortAnnoPrimRelation) {
+						List<String> primAnnoPair = Arrays.asList(annoPrim
+								.split("="));
+						if (primAnnoPair.size() == 2) {
+							String[] annos = primAnnoPair.get(1).split(
+									"\\s*,\\s*");
+							for (String anno : annos) {
+								if (anno.replace("}", "").replace("{", "")
+										.equals(currentTier)) {
+									annoPrimNew = primAnnoPair.get(0);
+								}
+							}
+						} else {
+							SpreadsheetImporter.logger
+									.error("Can not match the annotations to their primary text because the property settings do not match the needed syntax (missing \"=\"). Please check the syntax of your property settings.");
 						}
 					}
+				} else {
+					SpreadsheetImporter.logger
+							.error("Can not match the annotations to their primary text, because of syntax errors. Please check the syntax of your property settings.");
 				}
 			}
 		}
@@ -716,32 +736,34 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		// System.out.println(annoLayerCouple);
 		Map<String, SLayer> annoLayerCoupleMap = new HashMap<>();
 		if (tierLayerCouple != null && !tierLayerCouple.isEmpty()) {
-			List<String> annoLayerCoupleList = Arrays.asList(tierLayerCouple
-					.split("\\s*},\\s*"));
+			if (tierLayerCouple.matches(".+},.+")
+					|| tierLayerCouple.matches(".+}")) {
+				List<String> annoLayerCoupleList = Arrays
+						.asList(tierLayerCouple.split("\\s*},\\s*"));
+				for (String annoLayer : annoLayerCoupleList) {
+					List<String> annoLayerPair = Arrays.asList(annoLayer
+							.split("="));
+					if ((annoLayerPair.size() == 2)) {
+						SLayer sLayer = SaltFactory.createSLayer();
+						sLayer.setName(annoLayerPair.get(0));
+						String[] assoAnno = annoLayerPair.get(1).split(
+								"\\s*,\\s*");
+						for (String tier : assoAnno) {
+							tier = tier.replace("{", "");
+							tier = tier.replace("}", "");
+							annoLayerCoupleMap.put(tier, sLayer);
+						}
+					} else {
+						SpreadsheetImporter.logger
+								.error("Can not create SLayer because the property settings do not match the needed syntax (missing \"=\"). Please check the syntax of your property settings.");
 
-			for (String annoLayer : annoLayerCoupleList) {
-				List<String> annoLayerPair = Arrays
-						.asList(annoLayer.split("="));
-
-				SLayer sLayer = SaltFactory.createSLayer();
-				sLayer.setName(annoLayerPair.get(0));
-				String[] assoAnno = annoLayerPair.get(1).split("\\s*,\\s*");
-				for (String tier : assoAnno) {
-					tier = tier.replace("{", "");
-					tier = tier.replace("}", "");
-					annoLayerCoupleMap.put(tier, sLayer);
+					}
 				}
+			} else {
+				SpreadsheetImporter.logger
+						.error("Can not create SLayer because the property settings do not match the needed syntax. Please check the syntax of your property settings.");
 			}
 		}
-		// TODO: throw an exception, if the syntax of the property is wrong
-		// else {
-		// throw new PepperModuleException(
-		// "Cannot import the given data, because the property file contains a
-		// corrupt value for property '"
-		// + getProps().getLayer()
-		// + "'. Please check the brackets/ syntax you used.");
-		// }
-
 		return annoLayerCoupleMap;
 	}
 
