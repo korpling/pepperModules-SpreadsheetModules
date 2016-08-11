@@ -279,9 +279,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				}
 
 				final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
-				final Table<Integer, Integer, CellRangeAddress> mergedCells = calculateMergedCellIndex(corpusSheet
+				Table<Integer, Integer, CellRangeAddress> mergedCells = null;
+				if(corpusSheet.getNumMergedRegions() > 0){
+				mergedCells = calculateMergedCellIndex(corpusSheet
 						.getMergedRegions());
-
+				} 
 				int progressTotalNumberOfColumns = 0;
 				if (!primTextPos.isEmpty()) {
 					progressTotalNumberOfColumns = setPrimText(corpusSheet,
@@ -605,8 +607,11 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 	private int getLastCell(Cell cell,
 			Table<Integer, Integer, CellRangeAddress> mergedCellsIdx) {
 		int lastCell = cell.getRowIndex();
-		CellRangeAddress mergedCell = mergedCellsIdx.get(cell.getRowIndex(),
+		CellRangeAddress mergedCell = null;
+		if(mergedCellsIdx != null){
+		mergedCell = mergedCellsIdx.get(cell.getRowIndex(),
 				cell.getColumnIndex());
+		}
 		if (mergedCell != null) {
 			lastCell = mergedCell.getLastRow();
 		}
