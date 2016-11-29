@@ -634,7 +634,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		} else {
 			String annoPrimRel = getProps().getAnnoPrimRel();
 			if (annoPrimRel != null) {
-				if (annoPrimRel.matches(".+],.+") || annoPrimRel.matches(".+]")) {
+				if (annoPrimRel.matches("(?s).+],.+") || annoPrimRel.matches("(?s).+]")) {
 					List<String> annoPrimRelation = Arrays.asList(annoPrimRel
 							.split("\\s*,\\s*"));
 					for (String annoPrim : annoPrimRelation) {
@@ -649,18 +649,22 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 							}
 						} else {
 							SpreadsheetImporter.logger
-									.error("Can not match the annotations to their primary text, because of syntax errors. Please check the syntax of your property settings.");
+									.error("Can not match the annotations to their primary text, because of syntax errors. "
+                    + "Please check the syntax of your property settings. "
+                    + "The problematic entry is:\n" 
+                    + annoPrim);
 						}
 					}
 				} else {
 					SpreadsheetImporter.logger
-							.error("Can not match the annotations to their primary text, because of syntax errors. Please check the syntax of your property settings.");
+							.error("Can not match the annotations to their primary text, because of syntax errors. "
+                + "Please check the syntax of your property settings.");
 				}
 			}
 			String shortAnnoPrimRel = getProps().getShortAnnoPrimRel();
 			if (shortAnnoPrimRel != null) {
-				if (shortAnnoPrimRel.matches(".+},.+")
-						|| shortAnnoPrimRel.matches(".+}")) {
+				if (shortAnnoPrimRel.matches("(?s).+},.+")
+						|| shortAnnoPrimRel.matches("(?s).+}")) {
 					List<String> shortAnnoPrimRelation = Arrays
 							.asList(shortAnnoPrimRel.split("\\s*},\\s*"));
 					for (String annoPrim : shortAnnoPrimRelation) {
@@ -741,8 +745,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		// System.out.println(annoLayerCouple);
 		Map<String, SLayer> annoLayerCoupleMap = new HashMap<>();
 		if (tierLayerCouple != null && !tierLayerCouple.isEmpty()) {
-			if (tierLayerCouple.matches(".+},.+")
-					|| tierLayerCouple.matches(".+}")) {
+			if (tierLayerCouple.matches("(?s).+},.+")
+					|| tierLayerCouple.matches("(?s).+}")) {
 				List<String> annoLayerCoupleList = Arrays
 						.asList(tierLayerCouple.split("\\s*},\\s*"));
 				for (String annoLayer : annoLayerCoupleList) {
