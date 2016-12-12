@@ -17,6 +17,7 @@
  */
 package org.corpus_tools.peppermodules.spreadsheet;
 
+import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,6 +58,7 @@ import org.eclipse.emf.common.util.URI;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import java.util.TreeSet;
 
 /**
  * 
@@ -167,6 +169,8 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 		// seperate string of primary text tiers into list by commas
 		List<String> primaryTextTierList = Arrays.asList(primaryTextTier
 				.split("\\s*,\\s*"));
+        
+        TreeSet<String> annosWithoutPrim = new TreeSet<>();
 
 		if (workbook != null) {
 			// get corpus sheet
@@ -191,10 +195,13 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 
 				List<Integer> primTextPos = new ArrayList<Integer>();
 				if (headerRow != null) {
-					// iterate through all tiers and save tiers (column number)
+
+
+                    // iterate through all tiers and save tiers (column number)
 					// that hold the primary data
 
 					int currColumn = 0;
+                    
 
 					List<String> emptyColumnList = new ArrayList<>();
 					while (currColumn < headerRow.getPhysicalNumberOfCells()) {
@@ -216,6 +223,9 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								}
 								emptyColumnList = new ArrayList<>();
 							}
+                            
+                            boolean primWasFound = false;
+                            
 							String tierName = headerRow.getCell(currColumn)
 									.toString();
 							if (primaryTextTierList.contains(tierName)) {
@@ -223,6 +233,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 								// save all indexes of tier containing primary
 								// text
 								primTextPos.add(currColumn);
+                                primWasFound = true;
 							} else {
 								// current tier contains (other) annotations
 								if (tierName.matches(".+\\[.+\\]")
@@ -237,19 +248,24 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 										setAnnotationPrimCouple(primTier,
 												annoPrimRelations, currColumn,
 												headerRow);
+                                        primWasFound = true;
 									}
+                                    
+                                    String primOfAnnoFromConfig = 
+                                            getPrimOfAnnoPrimRel(tierName
+											.split("\\[")[0]);
 
-									if (getPrimOfAnnoPrimRel(tierName
-											.split("\\[")[0]) != null) {
+									if (primOfAnnoFromConfig != null) {
 										// current tier is an annotation and the
 										// belonging primary text was set by
 										// property
 										setAnnotationPrimCouple(
-												getPrimOfAnnoPrimRel(tierName
-														.split("\\[")[0]),
+												primOfAnnoFromConfig,
 												annoPrimRelations, currColumn,
 												headerRow);
+                                        primWasFound = true;
 									}
+                                    
 								} else if (primaryTextTierList.size() == 1
 										&& getProps().getAnnoPrimRel() == null
 										&& getProps().getShortAnnoPrimRel() == null) {
@@ -260,24 +276,17 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 											primaryTextTierList.get(0),
 											annoPrimRelations, currColumn,
 											headerRow);
-								} else {
-									String emptyColumn = CellReference
-											.convertNumToColString(currColumn);
-									SpreadsheetImporter.logger
-											.warn("No primary text for the annotation '"
-													+ tierName
-													+ "' in document '"
-													+ getResourceURI()
-															.lastSegment()
-													+ "' given (column: "
-													+ emptyColumn + ").");
+                                    primWasFound = true;
 								}
 							}
+                            if(!primWasFound) {
+                                annosWithoutPrim.add(tierName);
+                            }
 							currColumn++;
 						}
 					}
 				}
-
+                
 				final Map<String, SLayer> layerTierCouples = getLayerTierCouples();
 				Table<Integer, Integer, CellRangeAddress> mergedCells = null;
 				if(corpusSheet.getNumMergedRegions() > 0){
@@ -302,6 +311,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 			if (getProps().getMetaAnnotation()) {
 				setDocMetaData(workbook);
 			}
+            
+            // report if any column was not included
+            if(!annosWithoutPrim.isEmpty()) {
+                SpreadsheetImporter.logger.warn("No primary text column found for columns\n- {}\nin document {}. This means these columns are not included in the conversion!", 
+                        Joiner.on("\n- ").join(annosWithoutPrim), getResourceURI().toFileString());
+            }
 		}
 	}
 
