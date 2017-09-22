@@ -424,8 +424,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 				} // end for each row of annotation
 
 				progressProcessedNumberOfColumns++;
-				setProgress((double) progressProcessedNumberOfColumns
-						/ (double) progressTotalNumberOfColumns);
+        if(progressProcessedNumberOfColumns < progressTotalNumberOfColumns) {
+          setProgress((double) progressProcessedNumberOfColumns
+              / (double) progressTotalNumberOfColumns);
+        } else {
+          setProgress(1.0);
+        }
 			} // end for each annotation layer
 		} else {
 			SpreadsheetImporter.logger
@@ -537,8 +541,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 			primaryText.setText(currentText.toString());
 
 			progressProcessedNumberOfColumns++;
-			setProgress((double) progressProcessedNumberOfColumns
-					/ (double) progressTotalNumberOfColumns);
+      if(progressProcessedNumberOfColumns < progressTotalNumberOfColumns) {
+        setProgress((double) progressProcessedNumberOfColumns
+            / (double) progressTotalNumberOfColumns);
+      } else {
+        setProgress(1.0);
+      }
 
 			if (getProps().getLayer() != null) {
 				if (currentTokList != null && layerTierCouples.size() > 0) {
