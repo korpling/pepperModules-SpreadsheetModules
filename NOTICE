@@ -30,6 +30,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
   Java Text Categorizing Library under GNU Lesser General Public License
+  JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   jaxb-api under CDDL 1.1 or GPL2 w/ CPE
   JSON in Java under The JSON License
   JUnit under Common Public License Version 1.0
