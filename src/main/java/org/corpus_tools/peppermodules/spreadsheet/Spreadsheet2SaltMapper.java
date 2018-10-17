@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -53,6 +54,7 @@ import org.corpus_tools.salt.common.SToken;
 import org.corpus_tools.salt.core.SLayer;
 import org.corpus_tools.salt.core.SNode;
 import org.corpus_tools.salt.util.DataSourceSequence;
+import org.corpus_tools.salt.util.SaltUtil;
 import org.eclipse.emf.common.util.URI;
 
 import com.google.common.collect.HashBasedTable;
@@ -404,7 +406,12 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements
 							if (annoName.matches(".+\\[.+\\]")) {
 								annoName = annoName.split("\\[")[0];
 							}
-							annoSpan.createAnnotation(null, annoName, annoText);
+							if(getProps().getParseNamespace()) {
+								Pair<String, String> qname = SaltUtil.splitQName(annoName);
+								annoSpan.createAnnotation(qname.getKey(), qname.getValue(), annoText);
+							} else {
+								annoSpan.createAnnotation(null, annoName, annoText);
+							}
 							annoSpan.setName(annoName);
 						}
 					}

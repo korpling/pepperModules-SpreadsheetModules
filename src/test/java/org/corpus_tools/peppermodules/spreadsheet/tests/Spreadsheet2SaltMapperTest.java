@@ -19,6 +19,7 @@ package org.corpus_tools.peppermodules.spreadsheet.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,6 +48,7 @@ import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SSpan;
 import org.corpus_tools.salt.common.SToken;
+import org.corpus_tools.salt.core.SAnnotation;
 import org.eclipse.emf.common.util.URI;
 import org.junit.After;
 import org.junit.Assert;
@@ -140,6 +142,44 @@ public class Spreadsheet2SaltMapperTest {
 		Assert.assertTrue(overlappedNames.contains("sTok5"));
 		Assert.assertTrue(overlappedNames.contains("sTok6"));
 		
+	}
+	
+	@Test
+	public void testSimpleSpanWithNamespace() throws FileNotFoundException, UnsupportedEncodingException {
+		
+		getFixture().getProps().setPropertyValue("parseNamespace", true);
+		map("simpleSpanNamespace.xlsx");
+		
+		SDocumentGraph g = getFixture().getDocument().getDocumentGraph();
+		List<SSpan> spans = g.getSpans();
+		
+		assertEquals(4, spans.size());
+		
+		SAnnotation anno1 = spans.get(0).getAnnotation("a::span");
+		assertNotNull(anno1);
+		assertEquals("anno1", anno1.getValue_STEXT());
+		assertEquals("a", anno1.getNamespace());
+		assertEquals("span", anno1.getName());
+		
+		SAnnotation anno2 = spans.get(1).getAnnotation("a::span");
+		assertNotNull(anno2);
+		assertEquals("anno2", anno2.getValue_STEXT());
+		assertEquals("a", anno2.getNamespace());
+		assertEquals("span", anno2.getName());
+		
+		SAnnotation anno3 = spans.get(2).getAnnotation("bc::span");
+		assertNotNull(anno3);
+		assertEquals("anno3", anno3.getValue_STEXT());
+		assertEquals("bc", anno3.getNamespace());
+		assertEquals("span", anno3.getName());
+		
+		SAnnotation anno4 = spans.get(3).getAnnotation("nonamespace");
+		assertNotNull(anno4);
+		assertEquals("anno4", anno4.getValue_STEXT());
+		assertNull(anno4.getNamespace());
+		assertEquals("nonamespace", anno4.getName());
+
+			
 	}
 	
 
