@@ -1,5 +1,7 @@
 package org.corpus_tools.peppermodules.spreadsheet.tests;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.corpus_tools.salt.common.STextualRelation;
 import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
+import org.junit.Test;
 
 public class Salt2SpreadsheetMapperTest {
 	
@@ -21,6 +24,26 @@ public class Salt2SpreadsheetMapperTest {
 	
 	private Spreadsheet2SaltMapper getFixture() {
 		return this.fixture;
+	}
+	
+	@Test
+	public void testTokenizations() {
+		fail();
+	}
+	
+	@Test
+	public void testTokenAnnotations() {
+		fail();
+	}
+	
+	@Test
+	public void testSpanAnnotations() {
+		fail();
+	}
+	
+	@Test
+	public void testDependencyAnnotations() {
+		fail();
 	}
 	
 	private static class SourceGraph {		
