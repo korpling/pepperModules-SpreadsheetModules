@@ -10,6 +10,11 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(name="SpreadsheetExporterComponent", factory="PepperExporterComponentFactory")
 public class SpreadsheetExporter extends PepperExporterImpl implements PepperExporter {
+	
+	public SpreadsheetExporter() {
+		setProperties(new SpreadsheetExporterProperties());
+	}
+	
 	@Override
 	public PepperMapper createPepperMapper(Identifier identifier) {
 		Salt2SpreadsheetMapper mapper = new Salt2SpreadsheetMapper();
