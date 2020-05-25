@@ -51,7 +51,7 @@ public class Salt2SpreadsheetMapperTest {
 	}
 	
 	@Before
-	public void setFixture(Salt2SpreadsheetMapper fixture) {
+	public void setFixture() {
 		this.fixture = new Salt2SpreadsheetMapper();
 	}
 	
