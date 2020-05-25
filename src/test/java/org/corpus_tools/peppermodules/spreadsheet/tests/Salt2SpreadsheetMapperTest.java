@@ -149,7 +149,7 @@ public class Salt2SpreadsheetMapperTest {
 		private static final Integer[] HEADS_A = {3, 0, 3, 3, 7, 5, null, 10, 0, 10, 10, 12, 13, 14, null};
 		private static final String[] DEPRELS_A = {"subj", "root", "mod", "comp:aux", "det", "comp:obj", null, "subj", "root", "mod", "comp:aux", "udep", "comp:obj", "comp:obj", null};
 		private static final String[] TOKENS_B = {"we", "do", "not", "need", "education", ".", "We", "will not", "go", "there", "."};
-		private static final int[][] TIME_VALS_B = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 12}, {12, 13}, {13, 14}, {14, 15}};
+		private static final int[][] TIME_VALS_B = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {5, 6}, {6, 7}, {7, 8}, {8, 12}, {12, 13}, {13, 14}, {14, 15}};
 		private static final String[] LEMMA_B = {"we", "do", "not", "need", "education", ".", "we", "will", "go", "there", "."};
 		private static final String[] POS_B = {"PRON", "AUX", "PART", "VERB", "NOUN", "PUNCT", "PRON", "AUX", "VERB", "ADV", "PUNCT"};
 		private static final String LEMMA_NAME = "lemma";
