@@ -69,7 +69,6 @@ public class Salt2SpreadsheetMapperTest {
 		Salt2SpreadsheetMapper mapper = getFixture();
 		Path targetPath = Paths.get(PepperTestUtil.getTempPath_static("exporter_test").toString(), TEST_OUT_FILE_NAME);
 		targetPath.toFile().mkdirs();
-		System.out.println("Creating URI from: " + targetPath.toString() + ":" +URI.createFileURI(targetPath.toString()));
 		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
 		mapper.mapSDocument();
 		return WorkbookFactory.create(targetPath.toFile());
