@@ -97,8 +97,8 @@ public class Salt2SpreadsheetMapperTest {
 		Set<CellRangeAddress> fixRelevantRegions = fixMergedRegions.stream().filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn()))).collect(Collectors.toSet());
 		assertEquals(goldRelevantRegions.size(), fixRelevantRegions.size());
 		for (CellRangeAddress address : goldRelevantRegions) {
-			assertTrue(fixRelevantRegions.contains(address));  // FIXME this method might go by same, not by equals
-		}
+			assertTrue(fixRelevantRegions.contains(address));
+		}		
 	}
 	
 	@Test
