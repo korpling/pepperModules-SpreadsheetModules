@@ -76,6 +76,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		} else {
 			// multiple parallel tokenizations
 			int colIx = 0;
+			int headerOffset = 1;
 			for (STextualDS ds : graph.getTextualDSs()) {
 				int rowIx = 0;
 				String colName = ds.getName();
@@ -90,7 +91,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 						rowIx = tRel.getStart();
 						height = tRel.getEnd() - tRel.getStart();
 					} 
-					createEntry(rowIx, colIx, height, graph.getText(sTok));					
+					createEntry(rowIx + headerOffset, colIx, height, graph.getText(sTok));					
 					rowIx += height - 1;					
 				}
 				colIx += 1;
@@ -99,6 +100,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	}
 	
 	private void createEntry(int x, int y, int height, String value) {
+		System.out.println("Creating entry " + value + " @ coords " + x + " " + y + " with height " + height);
 		for (int xi = 0; xi < height; xi++) {
 			Row row = getSheet().getRow(x + xi);
 			if (row == null) {
