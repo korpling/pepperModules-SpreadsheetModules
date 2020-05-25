@@ -83,8 +83,13 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				createEntry(rowIx, colIx, 1, colName);
 				for (SToken sTok : graph.getSortedTokenByText(dsTokens)) {
 					rowIx += 1;
-					Optional<SRelation> optRelation = sTok.getOutRelations().stream().filter((SRelation r) -> r instanceof STimelineRelation).findFirst();					
-					int height = optRelation.isPresent()? ((STimelineRelation) optRelation.get()).getEnd() - ((STimelineRelation) optRelation.get()).getStart() : 1; 
+					int height = 1;
+					Optional<SRelation> optRelation = sTok.getOutRelations().stream().filter((SRelation r) -> r instanceof STimelineRelation).findFirst();
+					if (optRelation.isPresent()) {
+						STimelineRelation tRel = (STimelineRelation) optRelation.get();
+						rowIx = tRel.getStart();
+						height = tRel.getEnd() - tRel.getStart();
+					} 
 					createEntry(rowIx, colIx, height, graph.getText(sTok));					
 					rowIx += height - 1;					
 				}
