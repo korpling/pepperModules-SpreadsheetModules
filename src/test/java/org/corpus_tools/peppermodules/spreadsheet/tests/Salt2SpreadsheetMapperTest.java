@@ -102,7 +102,7 @@ public class Salt2SpreadsheetMapperTest {
 			for (int c : columns) {
 				String gValue = gRow.getCell(c) == null || gRow.getCell(c).getStringCellValue().trim().isEmpty()? null : gRow.getCell(c).getStringCellValue();
 				String fValue = fRow.getCell(c) == null || fRow.getCell(c).getStringCellValue().trim().isEmpty()? null : fRow.getCell(c).getStringCellValue();
-				assertEquals(gValue, fValue);				
+				assertEquals("Token values are unequal @ " + (fRow.getRowNum() + 1) + " " + c, gValue, fValue);				
 			}
 		}
 		// check for merged cells
@@ -144,7 +144,7 @@ public class Salt2SpreadsheetMapperTest {
 		private static final String[] TOK_NAMES = {"TOK", "TOK_A", "TOK_B"};
 		private static final String[] TOKENS = {"we", "don't", "need", "no", "education", ".", "we", "ain't", "gonna", "go", "there", "."};
 		private static final int[][] TIME_VALS = {{0, 1}, {1, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 10}, {10, 12}, {12, 13}, {13, 14}, {14, 15}};
-		private static final String[] TOKENS_A = {"we", "do", "n't", "need", "any", "education", ".", "We", "are", "not", "going", "to", "go", "there", "."};
+		private static final String[] TOKENS_A = {"we", "do", "n't", "need", "any", "education", ".", "we", "are", "not", "going", "to", "go", "there", "."};
 		private static final int[][] TIME_VALS_A = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}, {10, 11}, {11, 12}, {12, 13}, {13, 14}, {14, 15}};
 		private static final String[] LEMMA_A = {"we", "do", "not", "need", "any", "education", ".", "we", "be", "not", "go", "to", "go", "there", "."};
 		private static final String[] POS_A = {"PRON", "AUX", "PART", "VERB", "DET", "NOUN", "PUNCT", "PRON", "AUX", "PART", "VERB", "PART", "VERB", "ADV", "PUNCT"};
