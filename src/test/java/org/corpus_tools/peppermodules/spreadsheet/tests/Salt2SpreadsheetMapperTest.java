@@ -168,7 +168,8 @@ public class Salt2SpreadsheetMapperTest {
 					String token = tokArr[i];
 					int start = timeVals[i][0];
 					int end = timeVals[i][1];
-					SToken tok = SaltFactory.createSToken();					
+					SToken tok = SaltFactory.createSToken();	
+					docGraph.addNode(tok);
 					STextualRelation txtRel = SaltFactory.createSTextualRelation();
 					txtRel.setSource(tok);
 					txtRel.setTarget(ds);					
