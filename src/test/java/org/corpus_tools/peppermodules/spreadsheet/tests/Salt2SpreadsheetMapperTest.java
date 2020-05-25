@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.corpus_tools.pepper.testFramework.PepperTestUtil;
 import org.corpus_tools.peppermodules.spreadsheet.Salt2SpreadsheetMapper;
+import org.corpus_tools.peppermodules.spreadsheet.Spreadsheet2SaltMapper;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocumentGraph;
@@ -35,6 +36,7 @@ import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
 import org.corpus_tools.salt.util.DataSourceSequence;
 import org.eclipse.emf.common.util.URI;
+import org.junit.Before;
 import org.junit.Test;
 
 public class Salt2SpreadsheetMapperTest {
@@ -48,6 +50,10 @@ public class Salt2SpreadsheetMapperTest {
 		return this.fixture;
 	}
 	
+	@Before
+	public void setFixture(Salt2SpreadsheetMapper fixture) {
+		this.fixture = new Salt2SpreadsheetMapper();
+	}
 	
 	private Workbook mappingResult = null;
 	
@@ -62,6 +68,8 @@ public class Salt2SpreadsheetMapperTest {
 	private Workbook map(SDocumentGraph documentGraph) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		Salt2SpreadsheetMapper mapper = getFixture();
 		Path targetPath = Paths.get(PepperTestUtil.getTempPath_static("exporter_test").toString(), TEST_OUT_FILE_NAME);
+		targetPath.toFile().mkdirs();
+		System.out.println("Creating URI from: " + targetPath.toString() + ":" +URI.createFileURI(targetPath.toString()));
 		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
 		mapper.mapSDocument();
 		return WorkbookFactory.create(targetPath.toFile());
