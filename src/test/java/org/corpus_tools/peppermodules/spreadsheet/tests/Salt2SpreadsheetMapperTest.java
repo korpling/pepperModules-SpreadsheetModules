@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,9 +69,10 @@ public class Salt2SpreadsheetMapperTest {
 	private Workbook map(SDocumentGraph documentGraph) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		Salt2SpreadsheetMapper mapper = getFixture();
 		Path targetPath = Paths.get(PepperTestUtil.getTempPath_static("exporter_test").toString(), TEST_OUT_FILE_NAME);
-		targetPath.toFile().mkdirs();
+		targetPath.toFile().getParentFile().mkdirs();
 		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
 		mapper.mapSDocument();
+		assertTrue("Exporter's output cannot be found on disk.", Files.exists(targetPath));
 		return WorkbookFactory.create(targetPath.toFile());
 	}
 	
