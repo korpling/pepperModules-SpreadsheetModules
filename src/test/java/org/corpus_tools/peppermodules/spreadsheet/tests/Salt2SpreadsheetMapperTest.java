@@ -181,7 +181,8 @@ public class Salt2SpreadsheetMapperTest {
 					timeRel.setSource(tok);
 					timeRel.setTarget(timeline);
 					docGraph.addRelation(timeRel);
-					timeline.increasePointOfTime(end - timeline.getEnd());
+					int tlLen = timeline.getEnd() == null? 0 : timeline.getEnd();
+					timeline.increasePointOfTime(end - tlLen);
 					timeRel.setStart(start);
 					timeRel.setEnd(end);
 					if (k > 0) {
