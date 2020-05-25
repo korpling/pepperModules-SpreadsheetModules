@@ -1,12 +1,29 @@
 package org.corpus_tools.peppermodules.spreadsheet.tests;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.corpus_tools.peppermodules.spreadsheet.Spreadsheet2SaltMapper;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.corpus_tools.pepper.testFramework.PepperTestUtil;
+import org.corpus_tools.peppermodules.spreadsheet.Salt2SpreadsheetMapper;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocumentGraph;
@@ -16,38 +33,98 @@ import org.corpus_tools.salt.common.STextualRelation;
 import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
+import org.eclipse.emf.common.util.URI;
 import org.junit.Test;
 
 public class Salt2SpreadsheetMapperTest {
 	
-	private Spreadsheet2SaltMapper fixture = null;
+	private static final String SAMPLE_FILE_NAME = "exporter_example.xlsx";
+	private static final String TEST_OUT_FILE_NAME = "_test.xlsx";
 	
-	private Spreadsheet2SaltMapper getFixture() {
+	private Salt2SpreadsheetMapper fixture = null;
+	
+	private Salt2SpreadsheetMapper getFixture() {
 		return this.fixture;
 	}
 	
-	@Test
-	public void testTokenizations() {
-		fail();
+	
+	private Workbook mappingResult = null;
+	
+	/**
+	 * This method runs a conversion of the given {@link SDocumentGraph} Object. 
+	 * @param documentGraph The {@link SDocumentGraph} to be exported.
+	 * @return {@link Path} of the created excel sheet, null if mapping failed
+	 * @throws IOException 
+	 * @throws InvalidFormatException 
+	 * @throws EncryptedDocumentException 
+	 */
+	private Workbook map(SDocumentGraph documentGraph) throws EncryptedDocumentException, InvalidFormatException, IOException {
+		Salt2SpreadsheetMapper mapper = getFixture();
+		Path targetPath = Paths.get(PepperTestUtil.getTempPath_static("exporter_test").toString(), TEST_OUT_FILE_NAME);
+		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
+		mapper.mapSDocument();
+		return WorkbookFactory.create(targetPath.toFile());
+	}
+	
+	private Workbook getMappingResult() throws EncryptedDocumentException, InvalidFormatException, IOException {
+		if (mappingResult == null) {
+			SDocumentGraph fixGraph = TestGraph.getGraph();
+			mappingResult = map(fixGraph);
+		}
+		return mappingResult;
+	}
+	
+	private void testColumns(Integer... columns) throws EncryptedDocumentException, InvalidFormatException, IOException {
+		Workbook goldWorkbook = WorkbookFactory.create( Paths.get(PepperTestUtil.getTestResources(), SAMPLE_FILE_NAME).toFile() );
+		Sheet goldSheet = goldWorkbook.getSheet(TestGraph.DOC_NAME);		
+		Workbook fixWorkbook = getMappingResult();
+		Sheet fixSheet = fixWorkbook.getSheet(TestGraph.DOC_NAME);
+		// check columns
+		assertEquals(goldSheet.getFirstRowNum(), fixSheet.getFirstRowNum());
+		assertEquals(goldSheet.getLastRowNum(), fixSheet.getLastRowNum());
+		Iterator<Row> itGoldRows = goldSheet.rowIterator();
+		Iterator<Row> itFixRows = fixSheet.rowIterator();
+		for (Row gRow = itGoldRows.next(), fRow = itFixRows.next(); itGoldRows.hasNext() && itFixRows.hasNext(); gRow = itGoldRows.next(), fRow = itFixRows.next()) {
+			for (int c : columns) {
+				assertEquals(gRow.getCell(c).getStringCellValue(), fRow.getCell(c).getStringCellValue());				
+			}
+		}
+		// check for merged cells
+		final Set<Integer> colSet = new HashSet<Integer>(Arrays.asList(columns));		
+		List<CellRangeAddress> goldMergedRegions = goldSheet.getMergedRegions();
+		Set<CellRangeAddress> goldRelevantRegions = goldMergedRegions.stream().filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn()))).collect(Collectors.toSet());
+		List<CellRangeAddress> fixMergedRegions = fixSheet.getMergedRegions();
+		Set<CellRangeAddress> fixRelevantRegions = fixMergedRegions.stream().filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn()))).collect(Collectors.toSet());
+		assertEquals(goldRelevantRegions.size(), fixRelevantRegions.size());
+		for (CellRangeAddress address : goldRelevantRegions) {
+			assertTrue(fixRelevantRegions.contains(address));  // FIXME this method might go by same, not by equals
+		}
 	}
 	
 	@Test
-	public void testTokenAnnotations() {
-		fail();
+	public void testTokenizations() throws EncryptedDocumentException, InvalidFormatException, IOException {
+		testColumns(0, 1, 2);
 	}
 	
 	@Test
-	public void testSpanAnnotations() {
-		fail();
+	public void testTokenAnnotations() throws EncryptedDocumentException, InvalidFormatException, IOException {
+		testColumns(5, 6, 7, 8);
 	}
 	
 	@Test
-	public void testDependencyAnnotations() {
-		fail();
+	public void testSpanAnnotations() throws EncryptedDocumentException, InvalidFormatException, IOException {
+		testColumns(3, 4);
 	}
 	
-	private static class SourceGraph {		
-		private static SDocumentGraph instance;
+	@Test
+	public void testDependencyAnnotations() throws EncryptedDocumentException, InvalidFormatException, IOException {
+		testColumns(9, 10);
+	}
+	
+	private static class TestGraph {		
+		private static TestGraph instance;
+		private static SDocumentGraph instanceGraph;
+		private static Workbook workbook;
 		private static final String[] TOKENS = {"we", "don't", "need", "no", "education", ".", "We", "ain't", "gonna", "go", "there", "."};
 		private static final int[][] TIME_VALS = {{0, 1}, {1, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 10}, {10, 12}, {12, 13}, {13, 14}, {14, 15}};
 		private static final String[] TOKENS_A = {"we", "do", "n't", "need", "any", "education", ".", "We", "are", "not", "going", "to", "go", "there", "."};
@@ -64,70 +141,81 @@ public class Salt2SpreadsheetMapperTest {
 		private static final String POS_NAME = "pos";
 		private static final String DEP_TYPE = "dependency";
 		private static final String DEP_NAME = "rel";
-		protected SourceGraph() {
-			if (instance == null) {
-				SDocumentGraph docGraph = SaltFactory.createSDocumentGraph();
-				STimeline timeline = docGraph.createTimeline();
-				List<String[]> tokenArrays = new ArrayList<>();
-				tokenArrays.add(TOKENS);
-				tokenArrays.add(TOKENS_A);
-				tokenArrays.add(TOKENS_B);
-				List<int[][]> timeArrays = new ArrayList<>();
-				timeArrays.add(TIME_VALS);
-				timeArrays.add(TIME_VALS_A);
-				timeArrays.add(TIME_VALS_B);
-				List<String[]> posAnnos = new ArrayList<>();
-				posAnnos.add(POS_A);
-				posAnnos.add(POS_B);
-				List<String[]> lemmaAnnos = new ArrayList<>();
-				lemmaAnnos.add(LEMMA_A);
-				lemmaAnnos.add(LEMMA_B);
-				for (int k = 0; k < 3; k++) {
-					String[] tokArr = tokenArrays.get(k);
-					int[][] timeVals = timeArrays.get(k);
-					STextualDS ds = docGraph.createTextualDS(StringUtils.join(tokArr));
-					int p = 0;
-					for (int i = 0; i < tokArr.length; i++) {
-						String token = tokArr[i];
-						int start = timeVals[i][0];
-						int end = timeVals[i][1];
-						SToken tok = SaltFactory.createSToken();
-						STextualRelation txtRel = (STextualRelation) docGraph.createRelation(tok, ds, SALT_TYPE.STEXTUAL_RELATION, null);
-						txtRel.setStart(p);
-						txtRel.setEnd(p + token.length());
-						p = txtRel.getEnd();
-						STimelineRelation timeRel = (STimelineRelation) docGraph.createRelation(tok, timeline, SALT_TYPE.STIMELINE_RELATION, null);
-						timeline.increasePointOfTime(end - timeline.getEnd());
-						timeRel.setStart(start);
-						timeRel.setEnd(end);
-						if (k > 0) {
-							String pos_val = posAnnos.get(k - 1)[i];
-							String lemma_val = lemmaAnnos.get(k - 1)[i];
-							tok.createAnnotation(null, POS_NAME, pos_val);
-							tok.createAnnotation(null, LEMMA_NAME, lemma_val);
-						}
-					}
-					if (k == 1) {
-						// Dependency annotation
-						List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getOverlappedTokens(ds, SALT_TYPE.STEXTUAL_RELATION));
-						for (int i = 0; i < DEPRELS_A.length; i++) {
-							int head_id = HEADS_A[i] - 2;  // provided indices are Excel row indices
-							String depRelLabel = DEPRELS_A[i];
-							if (head_id >= 0) {
-								SToken sourceTok = tokenList.get(head_id);
-								SToken targetTok = tokenList.get(i);
-								SPointingRelation depRel = (SPointingRelation) docGraph.createRelation(sourceTok, targetTok, SALT_TYPE.SPOINTING_RELATION, null);
-								depRel.setType(DEP_TYPE);
-								depRel.createAnnotation(null, DEP_NAME, depRelLabel);
-							}
-						}
+		protected static final String DOC_NAME = "test_doc";
+		private TestGraph() {			
+			SDocumentGraph docGraph = SaltFactory.createSDocumentGraph();
+			STimeline timeline = docGraph.createTimeline();
+			List<String[]> tokenArrays = new ArrayList<>();
+			tokenArrays.add(TOKENS);
+			tokenArrays.add(TOKENS_A);
+			tokenArrays.add(TOKENS_B);
+			List<int[][]> timeArrays = new ArrayList<>();
+			timeArrays.add(TIME_VALS);
+			timeArrays.add(TIME_VALS_A);
+			timeArrays.add(TIME_VALS_B);
+			List<String[]> posAnnos = new ArrayList<>();
+			posAnnos.add(POS_A);
+			posAnnos.add(POS_B);
+			List<String[]> lemmaAnnos = new ArrayList<>();
+			lemmaAnnos.add(LEMMA_A);
+			lemmaAnnos.add(LEMMA_B);
+			for (int k = 0; k < 3; k++) { // k iterates over competing tokenizations and their corresponding annotations
+				String[] tokArr = tokenArrays.get(k);
+				int[][] timeVals = timeArrays.get(k);
+				STextualDS ds = docGraph.createTextualDS(StringUtils.join(tokArr));
+				int p = 0;
+				for (int i = 0; i < tokArr.length; i++) { // i iterates over individual values of the k-th tokenization/annotation, i. e. across time
+					String token = tokArr[i];
+					int start = timeVals[i][0];
+					int end = timeVals[i][1];
+					SToken tok = SaltFactory.createSToken();
+					STextualRelation txtRel = (STextualRelation) docGraph.createRelation(tok, ds, SALT_TYPE.STEXTUAL_RELATION, null);
+					txtRel.setStart(p);
+					txtRel.setEnd(p + token.length());
+					p = txtRel.getEnd();
+					STimelineRelation timeRel = (STimelineRelation) docGraph.createRelation(tok, timeline, SALT_TYPE.STIMELINE_RELATION, null);
+					timeline.increasePointOfTime(end - timeline.getEnd());
+					timeRel.setStart(start);
+					timeRel.setEnd(end);
+					if (k > 0) {
+						String pos_val = posAnnos.get(k - 1)[i];
+						String lemma_val = lemmaAnnos.get(k - 1)[i];
+						tok.createAnnotation(null, POS_NAME, pos_val);
+						tok.createAnnotation(null, LEMMA_NAME, lemma_val);
 					}
 				}
-				instance = docGraph;
+				if (k == 1) {
+					// Dependency annotation
+					List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getOverlappedTokens(ds, SALT_TYPE.STEXTUAL_RELATION));
+					for (int i = 0; i < DEPRELS_A.length; i++) {
+						int head_id = HEADS_A[i] - 2;  // provided indices are Excel row indices
+						String depRelLabel = DEPRELS_A[i];
+						if (head_id >= 0) {
+							SToken sourceTok = tokenList.get(head_id);
+							SToken targetTok = tokenList.get(i);
+							SPointingRelation depRel = (SPointingRelation) docGraph.createRelation(sourceTok, targetTok, SALT_TYPE.SPOINTING_RELATION, null);
+							depRel.setType(DEP_TYPE);
+							depRel.createAnnotation(null, DEP_NAME, depRelLabel);
+						}
+					}
+				}				
+				instanceGraph = docGraph;
 			}
 		}		
-		protected SDocumentGraph getInstance() {
+		
+		private static TestGraph getInstance() {
+			if (instance == null) {
+				instance = new TestGraph();
+			}
 			return instance;
+		}
+		
+		private SDocumentGraph getInstanceGraph() {
+			return instanceGraph;
+		}
+		
+		protected static SDocumentGraph getGraph() {
+			return getInstance().getInstanceGraph();
 		}
 	}
 }
