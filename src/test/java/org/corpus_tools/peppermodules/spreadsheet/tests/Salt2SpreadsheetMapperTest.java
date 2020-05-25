@@ -33,6 +33,7 @@ import org.corpus_tools.salt.common.STextualRelation;
 import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
+import org.corpus_tools.salt.util.DataSourceSequence;
 import org.eclipse.emf.common.util.URI;
 import org.junit.Test;
 
@@ -194,9 +195,9 @@ public class Salt2SpreadsheetMapperTest {
 				}
 				if (k == 1) {
 					// Dependency annotation
-					List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getOverlappedTokens(ds, SALT_TYPE.STEXTUAL_RELATION));
+					List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getTokensBySequence(new DataSourceSequence<Number>(ds, ds.getStart(), ds.getEnd())));
 					for (int i = 0; i < DEPRELS_A.length; i++) {
-						int head_id = HEADS_A[i] - 2;  // provided indices are Excel row indices
+						int head_id = HEADS_A[i] == null? -1 : HEADS_A[i] - 2;  // provided indices are Excel row indices
 						String depRelLabel = DEPRELS_A[i];
 						if (head_id >= 0) {
 							SToken sourceTok = tokenList.get(head_id);
