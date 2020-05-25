@@ -177,7 +177,10 @@ public class Salt2SpreadsheetMapperTest {
 					txtRel.setEnd(p + token.length());
 					docGraph.addRelation(txtRel);
 					p = txtRel.getEnd();
-					STimelineRelation timeRel = (STimelineRelation) docGraph.createRelation(tok, timeline, SALT_TYPE.STIMELINE_RELATION, null);
+					STimelineRelation timeRel = SaltFactory.createSTimelineRelation();
+					timeRel.setSource(tok);
+					timeRel.setTarget(timeline);
+					docGraph.addRelation(timeRel);
 					timeline.increasePointOfTime(end - timeline.getEnd());
 					timeRel.setStart(start);
 					timeRel.setEnd(end);
