@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -73,19 +75,34 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				int rowIx = 0;
 				String colName = ds.getName();
 				List<SToken> dsTokens = graph.getTokensBySequence(new DataSourceSequence<Number>(ds, ds.getStart(), ds.getEnd()));
-				sheet.getRow(rowIx).getCell(colIx).setCellValue(colName);
+				createEntry(rowIx, colIx, 1, colName);
 				for (SToken sTok : graph.getSortedTokenByText(dsTokens)) {
 					rowIx += 1;
 					Optional<SRelation> optRelation = sTok.getOutRelations().stream().filter((SRelation r) -> r instanceof STimelineRelation).findFirst();
 					sheet.getRow(rowIx).getCell(colIx).setCellValue(graph.getText(sTok));
 					int height = optRelation.isPresent()? ((STimelineRelation) optRelation.get()).getEnd() - ((STimelineRelation) optRelation.get()).getStart() : 1; 
-					if (height > 1) {
-						sheet.addMergedRegion(new CellRangeAddress(rowIx, rowIx + height - 1, colIx, colIx));
-						rowIx += height - 1;
-					}
+					createEntry(rowIx, colIx, height, graph.getText(sTok));					
+					rowIx += height - 1;					
 				}
 				colIx += 1;
 			}
+		}
+	}
+	
+	private void createEntry(int x, int y, int height, String value) {
+		for (int xi = 0; xi < height; xi++) {
+			Row row = getSheet().getRow(x + xi);
+			if (row == null) {
+				row = getSheet().createRow(x + xi);
+			}
+			Cell cell = row.getCell(y);
+			if (cell == null) {
+				cell = row.createCell(y);
+			}
+		}
+		getSheet().getRow(x).getCell(y).setCellValue(value);
+		if (height > 1) {
+			getSheet().addMergedRegion(new CellRangeAddress(x, x + height - 1, y, y));
 		}
 	}
 	
