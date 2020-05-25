@@ -89,10 +89,11 @@ public class Salt2SpreadsheetMapperTest {
 	
 	private void testColumns(Integer... columns) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		Workbook goldWorkbook = WorkbookFactory.create( Paths.get(PepperTestUtil.getTestResources(), SAMPLE_FILE_NAME).toFile() );
-		Sheet goldSheet = goldWorkbook.getSheet(TestGraph.DOC_NAME);		
+		Sheet goldSheet = goldWorkbook.getSheetAt(0);		
 		Workbook fixWorkbook = getMappingResult();
-		Sheet fixSheet = fixWorkbook.getSheet(TestGraph.DOC_NAME);
+		Sheet fixSheet = fixWorkbook.getSheetAt(0);
 		// check columns
+		System.out.println(goldWorkbook + " " + fixWorkbook);
 		assertEquals(goldSheet.getFirstRowNum(), fixSheet.getFirstRowNum());
 		assertEquals(goldSheet.getLastRowNum(), fixSheet.getLastRowNum());
 		Iterator<Row> itGoldRows = goldSheet.rowIterator();
@@ -138,6 +139,7 @@ public class Salt2SpreadsheetMapperTest {
 		private static TestGraph instance;
 		private static SDocumentGraph instanceGraph;
 		private static Workbook workbook;
+		private static final String[] TOK_NAMES = {"TOK", "TOK_A", "TOK_B"};
 		private static final String[] TOKENS = {"we", "don't", "need", "no", "education", ".", "We", "ain't", "gonna", "go", "there", "."};
 		private static final int[][] TIME_VALS = {{0, 1}, {1, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 10}, {10, 12}, {12, 13}, {13, 14}, {14, 15}};
 		private static final String[] TOKENS_A = {"we", "do", "n't", "need", "any", "education", ".", "We", "are", "not", "going", "to", "go", "there", "."};
@@ -176,6 +178,7 @@ public class Salt2SpreadsheetMapperTest {
 				String[] tokArr = tokenArrays.get(k);
 				int[][] timeVals = timeArrays.get(k);
 				STextualDS ds = docGraph.createTextualDS(StringUtils.join(tokArr));
+				ds.setName(TOK_NAMES[k]);
 				int p = 0;
 				for (int i = 0; i < tokArr.length; i++) { // i iterates over individual values of the k-th tokenization/annotation, i. e. across time
 					String token = tokArr[i];
