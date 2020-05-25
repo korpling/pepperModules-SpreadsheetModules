@@ -50,7 +50,9 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	private Workbook getWorkbook() {
 		if (workbook == null) {
 			workbook = new XSSFWorkbook();
-			workbook.createSheet(getResourceURI().lastSegment());
+			String ext = getResourceURI().fileExtension();
+			String fileName = getResourceURI().lastSegment();
+			workbook.createSheet(fileName.substring(0, fileName.length() - ext.length() - 1));
 		}
 		return workbook;
 	}
