@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,6 +25,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.assertj.core.groups.Tuple;
 import org.corpus_tools.pepper.testFramework.PepperTestUtil;
 import org.corpus_tools.peppermodules.spreadsheet.Salt2SpreadsheetMapper;
 import org.corpus_tools.salt.SALT_TYPE;
@@ -108,13 +111,19 @@ public class Salt2SpreadsheetMapperTest {
 		// check for merged cells
 		final Set<Integer> colSet = new HashSet<Integer>(Arrays.asList(columns));		
 		List<CellRangeAddress> goldMergedRegions = goldSheet.getMergedRegions();
-		Set<CellRangeAddress> goldRelevantRegions = goldMergedRegions.stream().filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn()))).collect(Collectors.toSet());
+		Set<Tuple> goldRelevantRegions = goldMergedRegions.stream()
+				.filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn())))
+				.map((CellRangeAddress a) -> Tuple.tuple(a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn()))
+				.collect(Collectors.toSet());
 		List<CellRangeAddress> fixMergedRegions = fixSheet.getMergedRegions();
-		Set<CellRangeAddress> fixRelevantRegions = fixMergedRegions.stream().filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn()))).collect(Collectors.toSet());
+		Set<Tuple> fixRelevantRegions = fixMergedRegions.stream()
+				.filter((CellRangeAddress a) -> colSet.contains(new Integer(a.getFirstColumn())))
+				.map((CellRangeAddress a) -> Tuple.tuple(a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn()))
+				.collect(Collectors.toSet());
 		assertEquals(goldRelevantRegions.size(), fixRelevantRegions.size());
-		for (CellRangeAddress address : goldRelevantRegions) {
+		for (Tuple address : goldRelevantRegions) {
 			assertTrue(fixRelevantRegions.contains(address));
-		}		
+		}
 	}
 	
 	@Test
