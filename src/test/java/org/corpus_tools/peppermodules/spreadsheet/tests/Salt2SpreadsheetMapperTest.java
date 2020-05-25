@@ -168,10 +168,13 @@ public class Salt2SpreadsheetMapperTest {
 					String token = tokArr[i];
 					int start = timeVals[i][0];
 					int end = timeVals[i][1];
-					SToken tok = SaltFactory.createSToken();
-					STextualRelation txtRel = (STextualRelation) docGraph.createRelation(tok, ds, SALT_TYPE.STEXTUAL_RELATION, null);
+					SToken tok = SaltFactory.createSToken();					
+					STextualRelation txtRel = SaltFactory.createSTextualRelation();
+					txtRel.setSource(tok);
+					txtRel.setTarget(ds);					
 					txtRel.setStart(p);
 					txtRel.setEnd(p + token.length());
+					docGraph.addRelation(txtRel);
 					p = txtRel.getEnd();
 					STimelineRelation timeRel = (STimelineRelation) docGraph.createRelation(tok, timeline, SALT_TYPE.STIMELINE_RELATION, null);
 					timeline.increasePointOfTime(end - timeline.getEnd());
