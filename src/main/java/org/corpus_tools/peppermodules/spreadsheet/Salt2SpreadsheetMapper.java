@@ -100,7 +100,6 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	}
 	
 	private void createEntry(int x, int y, int height, String value) {
-		System.out.println("Creating entry " + value + " @ coords " + x + " " + y + " with height " + height);
 		for (int xi = 0; xi < height; xi++) {
 			Row row = getSheet().getRow(x + xi);
 			if (row == null) {
