@@ -1,5 +1,9 @@
 package org.corpus_tools.peppermodules.spreadsheet;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +40,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		mapTokenizations();
 		mapAnnotations();
 		mapRelations();
+		writeWorkbook();
 		return DOCUMENT_STATUS.COMPLETED;
 	}
 	
@@ -111,5 +116,15 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	
 	private void mapRelations() {
 		
+	}
+	
+	private void writeWorkbook() {
+		try {
+			OutputStream outStream = new FileOutputStream(getResourceURI().toFileString());
+			getWorkbook().write(outStream);
+			outStream.close();
+		} catch (IOException e) {
+			throw new PepperModuleDataException(this, "Could not write workbook to " + getResourceURI().toFileString());
+		}
 	}
 }
