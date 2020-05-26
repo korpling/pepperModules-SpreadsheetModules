@@ -10,9 +10,9 @@ import org.corpus_tools.pepper.modules.PepperModuleProperty;
 
 public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	/** Sets the font is to be used in the spreadsheet table (this influences the covered unicode characters). */
-	private static final String PROP_FONT_NAME = "font.name";
+	public static final String PROP_FONT_NAME = "font.name";
 	/** Configure the order of columns as comma-separated annotation names (qualified). Partial configurations are allowed. If no configuration is provided for an annotation, the next free column is used. */
-	private static final String PROP_COL_ORDER = "column.order";
+	public static final String PROP_COL_ORDER = "column.order";
 	
 	public SpreadsheetExporterProperties() {
 		addProperty(PepperModuleProperty.create()
@@ -42,8 +42,8 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 			return Collections.<String, Integer>emptyMap();
 		}
 		Map<String, Integer> columnOrder = new HashMap<>();
-		for (String qName : StringUtils.split((String) val)) {
-			columnOrder.put(qName, columnOrder.values().size());
+		for (String qName : StringUtils.split((String) val, ',')) {
+			columnOrder.put(qName.trim(), columnOrder.values().size());
 		}
 		return columnOrder;
 	}
