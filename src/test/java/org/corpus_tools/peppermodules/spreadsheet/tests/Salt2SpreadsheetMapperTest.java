@@ -215,8 +215,8 @@ public class Salt2SpreadsheetMapperTest {
 					if (k > 0) {
 						String pos_val = posAnnos.get(k - 1)[i];
 						String lemma_val = lemmaAnnos.get(k - 1)[i];
-						tok.createAnnotation(null, POS_NAME, pos_val);
-						tok.createAnnotation(null, LEMMA_NAME, lemma_val);
+						tok.createAnnotation(TOK_NAMES[k], POS_NAME, pos_val);
+						tok.createAnnotation(TOK_NAMES[k], LEMMA_NAME, lemma_val);
 					}
 				}
 				if (k == 1) {
