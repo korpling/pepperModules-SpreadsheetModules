@@ -1,5 +1,6 @@
 package org.corpus_tools.peppermodules.spreadsheet;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	public Map<String, Integer> getColumnOrder() {
 		Object val = getProperty(PROP_COL_ORDER).getValue();
 		if (val == null) {
-			return null;
+			return Collections.<String, Integer>emptyMap();
 		}
 		Map<String, Integer> columnOrder = new HashMap<>();
 		for (String qName : StringUtils.split((String) val)) {
