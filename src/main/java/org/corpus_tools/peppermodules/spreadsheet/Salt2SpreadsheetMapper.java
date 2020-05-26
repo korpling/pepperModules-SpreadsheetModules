@@ -100,6 +100,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					tokToCoords.put(sTok, createEntry(rowIx++, 0, 1, graph.getText(sTok)));
 				}
 			}
+			annoQNameToColIx.put(null, 0);
 		} else {
 			// multiple parallel tokenizations
 			int colIx = 0;
@@ -119,8 +120,12 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				}
 				colIx += 1;
 			}
+			annoQNameToColIx.put(null, graph.getTextualDSs().size() - 1);
 		}
-		annoQNameToColIx.put(null, graph.getTextualDSs().size() - 1);
+		int usedColumns = annoQNameToColIx.values().size();
+		for (Entry<String, Integer> entry : ((SpreadsheetExporterProperties) getProperties()).getColumnOrder().entrySet()) {
+			annoQNameToColIx.put(entry.getKey(), entry.getValue() + usedColumns);
+		}
 		for (Entry<SToken, int[]> entry : tokToCoords.entrySet()) {
 			SToken sTok = entry.getKey();
 			int[] coords = entry.getValue();
