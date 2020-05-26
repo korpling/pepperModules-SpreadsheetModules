@@ -120,14 +120,14 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				colIx += 1;
 			}
 		}
-		annoQNameToColIx.put(null, (int) sheet.getRow(0).getLastCellNum());
+		annoQNameToColIx.put(null, graph.getTextualDSs().size() - 1);
 		for (Entry<SToken, int[]> entry : tokToCoords.entrySet()) {
 			SToken sTok = entry.getKey();
 			int[] coords = entry.getValue();
 			for (SAnnotation sAnno : sTok.getAnnotations()) {
 				String qName = sAnno.getQName();
 				Integer colIx = getColumnIndex(qName);
-				createEntry(coords[0], coords[1], coords[2], sAnno.getValue_STEXT());
+				createEntry(coords[0], colIx, coords[2], sAnno.getValue_STEXT());
 			}
 		}
 	}
