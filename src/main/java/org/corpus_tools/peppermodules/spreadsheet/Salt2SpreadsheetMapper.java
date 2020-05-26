@@ -173,10 +173,11 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					throw new PepperModuleException("Token unknown: " + sTok.getId() + ":" + getDocumentGraph().getText(sTok));
 				}
 				minRow = Integer.min(minRow, coords[0]);
-				maxRow = Integer.max(maxRow, coords[1] + coords[2] - 1);
+				maxRow = Integer.max(maxRow, coords[0] + coords[2] - 1);
 			}
 			for (SAnnotation sAnno : sSpan.getAnnotations()) {
-				int colIx = 
+				int colIx = getColumnIndex(sAnno.getQName());
+				createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
 			}
 		}
 	}
