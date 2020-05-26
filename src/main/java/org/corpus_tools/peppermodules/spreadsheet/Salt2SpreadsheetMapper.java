@@ -126,7 +126,6 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		for (Entry<String, Integer> entry : ((SpreadsheetExporterProperties) getProperties()).getColumnOrder().entrySet()) {
 			createColumn(entry.getValue() + lastUsedIndex + 1, entry.getKey());
 		}
-		System.out.println(annoQNameToColIx);
 		for (Entry<SToken, int[]> entry : tokToCoords.entrySet()) {
 			SToken sTok = entry.getKey();
 			int[] coords = entry.getValue();
@@ -182,7 +181,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					throw new PepperModuleException("Token unknown: " + sTok.getId() + ":" + getDocumentGraph().getText(sTok));
 				}
 				minRow = Integer.min(minRow, coords[0]);
-				maxRow = Integer.max(maxRow, coords[0] + coords[2] - 1);
+				maxRow = Integer.max(maxRow, coords[0] + coords[2]);
 			}
 			for (SAnnotation sAnno : sSpan.getAnnotations()) {
 				int colIx = getColumnIndex(sAnno.getQName());
