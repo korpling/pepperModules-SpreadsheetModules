@@ -122,10 +122,11 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			}
 			annoQNameToColIx.put(null, graph.getTextualDSs().size() - 1);
 		}
-		int usedColumns = annoQNameToColIx.values().size();
+		int lastUsedIndex = Collections.max(annoQNameToColIx.values());
 		for (Entry<String, Integer> entry : ((SpreadsheetExporterProperties) getProperties()).getColumnOrder().entrySet()) {
-			annoQNameToColIx.put(entry.getKey(), entry.getValue() + usedColumns);
+			createColumn(entry.getValue() + lastUsedIndex + 1, entry.getKey());
 		}
+		System.out.println(annoQNameToColIx);
 		for (Entry<SToken, int[]> entry : tokToCoords.entrySet()) {
 			SToken sTok = entry.getKey();
 			int[] coords = entry.getValue();
@@ -137,13 +138,16 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		}
 	}
 	
+	private void createColumn(int index, String name) {
+		annoQNameToColIx.put(name, index);
+		createEntry(0, index, 1, name);
+	}
+	
 	private int getColumnIndex(String annoQName) {
 		Integer colIx = annoQNameToColIx.get(annoQName);
 		if (colIx == null) {
 			colIx = Collections.max(annoQNameToColIx.values()) + 1;
-			annoQNameToColIx.put(annoQName, colIx);
-			/* create column title */
-			createEntry(0, colIx, 1, annoQName);
+			createColumn(colIx, annoQName);
 		}
 		return colIx;
 	}
