@@ -28,6 +28,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.assertj.core.groups.Tuple;
 import org.corpus_tools.pepper.testFramework.PepperTestUtil;
 import org.corpus_tools.peppermodules.spreadsheet.Salt2SpreadsheetMapper;
+import org.corpus_tools.peppermodules.spreadsheet.SpreadsheetExporterProperties;
 import org.corpus_tools.salt.SALT_TYPE;
 import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocument;
@@ -74,6 +75,9 @@ public class Salt2SpreadsheetMapperTest {
 		Path targetPath = Paths.get(PepperTestUtil.getTempPath_static("exporter_test").toString(), TEST_OUT_FILE_NAME);
 		targetPath.toFile().getParentFile().mkdirs();
 		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
+		SpreadsheetExporterProperties properties = new SpreadsheetExporterProperties();
+		properties.setPropertyValue(properties.PROP_COL_ORDER, "TOK_A::pos, TOK_A::lemma, TOK_B::pos, TOK_B::lemma");
+		mapper.setProperties(properties);
 		SDocument doc = SaltFactory.createSDocument();
 		doc.setDocumentGraph(documentGraph);
 		mapper.setDocument(doc);
@@ -96,7 +100,6 @@ public class Salt2SpreadsheetMapperTest {
 		Workbook fixWorkbook = getMappingResult();
 		Sheet fixSheet = fixWorkbook.getSheetAt(0);
 		// check columns
-		System.out.println(goldWorkbook + " " + fixWorkbook);
 		assertEquals(goldSheet.getFirstRowNum(), fixSheet.getFirstRowNum());
 		assertEquals(goldSheet.getLastRowNum(), fixSheet.getLastRowNum());
 		Iterator<Row> itGoldRows = goldSheet.rowIterator();
