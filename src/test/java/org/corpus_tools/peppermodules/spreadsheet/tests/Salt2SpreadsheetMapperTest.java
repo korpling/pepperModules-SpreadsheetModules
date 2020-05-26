@@ -76,7 +76,7 @@ public class Salt2SpreadsheetMapperTest {
 		targetPath.toFile().getParentFile().mkdirs();
 		mapper.setResourceURI( URI.createFileURI(targetPath.toString()) );
 		SpreadsheetExporterProperties properties = new SpreadsheetExporterProperties();
-		properties.setPropertyValue(properties.PROP_COL_ORDER, "TOK_A::pos, TOK_A::lemma, TOK_B::pos, TOK_B::lemma");
+		properties.setPropertyValue(properties.PROP_COL_ORDER, "TOK::doc, TOK::sent, TOK_A::pos, TOK_B::pos, TOK_A::lemma, TOK_B::lemma");
 		mapper.setProperties(properties);
 		SDocument doc = SaltFactory.createSDocument();
 		doc.setDocumentGraph(documentGraph);
@@ -154,6 +154,11 @@ public class Salt2SpreadsheetMapperTest {
 		private static SDocumentGraph instanceGraph;
 		private static Workbook workbook;
 		private static final String[] TOK_NAMES = {"TOK", "TOK_A", "TOK_B"};
+		private static final String[] SENTENCES = {"S1", "S2"};
+		private static final int[][] SENTENCE_TOKENS = {{0, 5}, {6, 11}};
+		private static final String SENTENCE_NAME = "sent";
+		private static final String DOC_ANNO_NAME = "doc";
+		private static final String DOC_ANNO_VAL = "Document_1";
 		private static final String[] TOKENS = {"we", "don't", "need", "no", "education", ".", "we", "ain't", "gonna", "go", "there", "."};
 		private static final int[][] TIME_VALS = {{0, 1}, {1, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 10}, {10, 12}, {12, 13}, {13, 14}, {14, 15}};
 		private static final String[] TOKENS_A = {"we", "do", "n't", "need", "any", "education", ".", "we", "are", "not", "going", "to", "go", "there", "."};
@@ -222,7 +227,15 @@ public class Salt2SpreadsheetMapperTest {
 						tok.createAnnotation(TOK_NAMES[k], LEMMA_NAME, lemma_val);
 					}
 				}
-				if (k == 1) {
+				if (k == 0) {
+					List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getTokensBySequence(new DataSourceSequence<Number>(ds, ds.getStart(), ds.getEnd())));
+					for (int si = 0; si < SENTENCES.length; si++) {
+						List<SToken> sentenceTokens = tokenList.subList(SENTENCE_TOKENS[si][0], SENTENCE_TOKENS[si][1] + 1);
+						docGraph.createSpan(sentenceTokens).createAnnotation(TOK_NAMES[k], SENTENCE_NAME, SENTENCES[si]);
+					}
+					docGraph.createSpan(tokenList).createAnnotation(TOK_NAMES[k], DOC_ANNO_NAME, DOC_ANNO_VAL);
+				}
+				else if (k == 1) {
 					// Dependency annotation
 					List<SToken> tokenList = docGraph.getSortedTokenByText(docGraph.getTokensBySequence(new DataSourceSequence<Number>(ds, ds.getStart(), ds.getEnd())));
 					for (int i = 0; i < DEPRELS_A.length; i++) {
