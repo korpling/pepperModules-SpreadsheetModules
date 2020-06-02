@@ -143,11 +143,6 @@ public class Salt2SpreadsheetMapperTest {
 		testColumns(3, 4);
 	}
 	
-	@Test
-	public void testDependencyAnnotations() throws EncryptedDocumentException, InvalidFormatException, IOException {
-		testColumns(9, 10);
-	}
-	
 	private static class TestGraph {		
 		private static TestGraph instance;
 		private static SDocumentGraph instanceGraph;
