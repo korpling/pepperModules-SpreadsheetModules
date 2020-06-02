@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -26,7 +27,6 @@ import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SSpan;
 import org.corpus_tools.salt.common.STextualDS;
-import org.corpus_tools.salt.common.STimeline;
 import org.corpus_tools.salt.common.STimelineRelation;
 import org.corpus_tools.salt.common.SToken;
 import org.corpus_tools.salt.core.SAnnotation;
@@ -40,7 +40,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		super();
 		annoQNameToColIx = new HashMap<>();
 	}
-
+	
 	@Override
 	public DOCUMENT_STATUS mapSDocument() {
 		SDocument document = getDocument();
@@ -50,15 +50,25 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		if (document.getDocumentGraph() == null) {
 			throw new PepperModuleDataException(this, "Provided document has no document graph.");
 		}
+		readProperties();
 		mapTokenizations();
 		mapSpansAndAnnotations();
-		mapRelations();
 		writeWorkbook();
 		return DOCUMENT_STATUS.COMPLETED;
 	}
 	
+	private Font defaultFont = null;
+	private Map<String, Integer> columnOrder = null; 
+	
+	private void readProperties() {
+		SpreadsheetExporterProperties properties = (SpreadsheetExporterProperties) getProperties();
+		String fontName = properties.getFont();
+		defaultFont = getWorkbook().createFont();
+		defaultFont.setFontName(fontName);
+		columnOrder = properties.getColumnOrder();
+	}
+	
 	private Workbook workbook = null;
-	private Sheet sheet = null;
 	
 	private Workbook getWorkbook() {
 		if (workbook == null) {
@@ -83,9 +93,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	
 	private void mapTokenizations() {
 		tokToCoords = new HashMap<SToken, int[]>();
-		Sheet sheet = getSheet();
 		SDocumentGraph graph = getDocumentGraph();
-		STimeline timeline = graph.getTimeline();
 		List<SRelation<?, ?>> timelineRelations = graph.getRelations().stream()
 				.filter((SRelation<?, ?> r) -> r instanceof STimelineRelation)
 				.collect(Collectors.toList());
@@ -123,7 +131,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			annoQNameToColIx.put(null, graph.getTextualDSs().size() - 1);
 		}
 		int lastUsedIndex = Collections.max(annoQNameToColIx.values());
-		for (Entry<String, Integer> entry : ((SpreadsheetExporterProperties) getProperties()).getColumnOrder().entrySet()) {
+		for (Entry<String, Integer> entry : columnOrder.entrySet()) {
 			createColumn(entry.getValue() + lastUsedIndex + 1, entry.getKey());
 		}
 		for (Entry<SToken, int[]> entry : tokToCoords.entrySet()) {
@@ -160,6 +168,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			Cell cell = row.getCell(colIx);
 			if (cell == null) {
 				cell = row.createCell(colIx);
+				cell.getCellStyle().setFont(defaultFont);
 			}
 		}
 		getSheet().getRow(rowIx).getCell(colIx).setCellValue(value);
@@ -188,10 +197,6 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
 			}
 		}
-	}
-	
-	private void mapRelations() {
-		
 	}
 	
 	private void writeWorkbook() {
