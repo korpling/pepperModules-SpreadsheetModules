@@ -194,7 +194,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				}
 				Map<Integer, Integer> coordMap = new HashMap<>();
 				for (int i = 0; i < orderedValues.size(); i++) {
-					coordMap.put(orderedValues.get(i), i);
+					coordMap.put(orderedValues.get(i), i + headerOffset);
 				}
 				for (int c = 0; c < startValues.length; c++) {
 					for (int r = 0; r < startValues[c].size(); r++) {
