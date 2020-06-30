@@ -13,6 +13,8 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	public static final String PROP_FONT_NAME = "font.name";
 	/** Configure the order of columns as comma-separated annotation names (qualified). Partial configurations are allowed. If no configuration is provided for an annotation, the next free column is used. */
 	public static final String PROP_COL_ORDER = "column.order";
+	/** Remove trailing and leading whitespaces. */
+	public static final String PROP_TRIM_VALUES = "trim.values";
 	
 	public SpreadsheetExporterProperties() {
 		addProperty(PepperModuleProperty.create()
@@ -25,6 +27,12 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 				.withType(String.class)
 				.withDescription("Configure the order of columns as comma-separated annotation names (qualified). Partial configurations are allowed. If no configuration is provided for an annotation, the next free column is used.")
 				.isRequired(false)
+				.build());
+		addProperty(PepperModuleProperty.create()
+				.withName(PROP_TRIM_VALUES)
+				.withType(Boolean.class)
+				.withDescription("Remove trailing and leading whitespaces.")
+				.withDefaultValue(false)
 				.build());
 	}
 	
@@ -46,5 +54,9 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 			columnOrder.put(qName.trim(), columnOrder.values().size());
 		}
 		return columnOrder;
+	}
+	
+	public boolean trimValues() {
+		return (Boolean) getProperty(PROP_TRIM_VALUES).getValue();
 	}
 }
