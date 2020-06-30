@@ -32,7 +32,6 @@ import org.corpus_tools.salt.SaltFactory;
 import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SPointingRelation;
-import org.corpus_tools.salt.common.SSpan;
 import org.corpus_tools.salt.common.STextualDS;
 import org.corpus_tools.salt.common.STextualRelation;
 import org.corpus_tools.salt.common.STimeline;
@@ -78,6 +77,7 @@ public class Salt2SpreadsheetMapperTest {
 		properties.setPropertyValue(properties.PROP_COL_ORDER, "TOK::doc, TOK::sent, TOK_A::pos, TOK_B::pos, TOK_A::lemma, TOK_B::lemma");
 		mapper.setProperties(properties);
 		SDocument doc = SaltFactory.createSDocument();
+		doc.setName(TestGraph.DOC_NAME);
 		doc.setDocumentGraph(documentGraph);
 		mapper.setDocument(doc);
 		mapper.mapSDocument();
