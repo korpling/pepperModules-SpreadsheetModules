@@ -72,6 +72,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	private Font defaultFont = null;
 	private Map<String, Integer> columnOrder = null;
 	private boolean trimValues = false;
+	private Set<String> ignoreNames = null;
 	
 	private void readProperties() {
 		SpreadsheetExporterProperties properties = (SpreadsheetExporterProperties) getProperties();
@@ -79,7 +80,8 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		defaultFont = getWorkbook().createFont();
 		defaultFont.setFontName(fontName);
 		columnOrder = properties.getColumnOrder();
-		boolean trimValues = properties.trimValues();
+		trimValues = properties.trimValues();
+		ignoreNames = properties.ignoreAnnoNames(); 
 	}
 	
 	private Workbook workbook = null;
@@ -335,8 +337,10 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				maxRow = Integer.max(maxRow, coords[0] + coords[2]);
 			}
 			for (SAnnotation sAnno : sSpan.getAnnotations()) {
-				int colIx = getColumnIndex(sAnno.getQName());
-				createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
+				if (!ignoreNames.contains(sAnno.getQName())) {
+					int colIx = getColumnIndex(sAnno.getQName());
+					createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
+				}
 			}
 		}
 	}

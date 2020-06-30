@@ -1,8 +1,11 @@
 package org.corpus_tools.peppermodules.spreadsheet;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.corpus_tools.pepper.modules.PepperModuleProperties;
@@ -15,6 +18,8 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	public static final String PROP_COL_ORDER = "column.order";
 	/** Remove trailing and leading whitespaces. */
 	public static final String PROP_TRIM_VALUES = "trim.values";
+	/** Annotation names (comma-separated), that are ignored when mapping span annotations. The provided names will still be imported as tokens, given there are order relations. */
+	public static final String PROP_IGNORE_ANNO_NAMES = "ignore.anno.names";
 	
 	public SpreadsheetExporterProperties() {
 		addProperty(PepperModuleProperty.create()
@@ -33,6 +38,12 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 				.withType(Boolean.class)
 				.withDescription("Remove trailing and leading whitespaces.")
 				.withDefaultValue(false)
+				.build());
+		addProperty(PepperModuleProperty.create()
+				.withName(PROP_IGNORE_ANNO_NAMES)
+				.withType(String.class)
+				.withDescription("Annotation names (comma-separated), that are ignored when mapping span annotations. The provided names will still be imported as tokens, given there are order relations.")
+				.isRequired(false)
 				.build());
 	}
 	
@@ -58,5 +69,15 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	
 	public boolean trimValues() {
 		return (Boolean) getProperty(PROP_TRIM_VALUES).getValue();
+	}
+	
+	public Set<String> ignoreAnnoNames() {
+		Object o = getProperty(PROP_IGNORE_ANNO_NAMES).getValue();
+		if (o == null) {
+			return Collections.<String>emptySet();
+		}
+		return Arrays.stream(StringUtils.split((String) o, ","))
+				.map((String s) -> s.trim())
+				.collect(Collectors.toSet());
 	}
 }
