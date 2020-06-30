@@ -154,6 +154,8 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					String colName = entry.getKey();
 					Iterator<SNode> nodes = entry.getValue();
 					createEntry(0, colIx, 1, colName);
+					startValues[colIx] = new ArrayList<Integer>();
+					endValues[colIx] = new ArrayList<Integer>();
 					while (nodes.hasNext()) {
 						SNode node = nodes.next();
 						List<SToken> overlappedTokens = graph.getSortedTokenByText( graph.getOverlappedTokens(node) );
