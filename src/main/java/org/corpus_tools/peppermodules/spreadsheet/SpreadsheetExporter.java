@@ -15,11 +15,15 @@ public class SpreadsheetExporter extends PepperExporterImpl implements PepperExp
 	private static final String NAME = "SpreadsheetExporter";
 
 	public SpreadsheetExporter() {
+		super();
 		setSupplierContact(URI.createFileURI(PepperConfiguration.EMAIL));
 		setName(NAME);
 		addSupportedFormat("xlsx", "2007+", null);
 		setIsMultithreaded(true);
-		setProperties(new SpreadsheetExporterProperties());		
+		setProperties(new SpreadsheetExporterProperties());
+		setDesc("This exporter transforms a Salt model into a spreadsheet.");
+		setDocumentEnding("xlsx");
+		setExportMode(EXPORT_MODE.DOCUMENTS_IN_FILES);
 	}
 	
 	@Override
