@@ -20,13 +20,18 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	public static final String PROP_TRIM_VALUES = "trim.values";
 	/** Annotation names (comma-separated), that are ignored when mapping span annotations. The provided names will still be imported as tokens, given there are order relations. */
 	public static final String PROP_IGNORE_ANNO_NAMES = "ignore.anno.names";
+	/** TODO This property defines the preferred vertical alignment. */
+	public static final String PROP_VERTICAL_ALIGNMENT = "text.align.vertical";
+	/** TODO This property defines the preferred horizontal alignment. */
+	public static final String PROP_HORIZONTAL_ALIGNMENT = "text.align.horizontal";
 	
 	public SpreadsheetExporterProperties() {
 		addProperty(PepperModuleProperty.create()
 				.withName(PROP_FONT_NAME)
 				.withType(String.class)
 				.withDescription("Sets the font is to be used in the spreadsheet table (this influences the covered unicode characters).")
-				.withDefaultValue("DejaVu Sans").build());
+				.isRequired(false)
+				.build());
 		addProperty(PepperModuleProperty.create()
 				.withName(PROP_COL_ORDER)
 				.withType(String.class)
@@ -45,6 +50,18 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 				.withDescription("Annotation names (comma-separated), that are ignored when mapping span annotations. The provided names will still be imported as tokens, given there are order relations.")
 				.isRequired(false)
 				.build());
+		addProperty(PepperModuleProperty.create()
+				.withName(PROP_VERTICAL_ALIGNMENT)
+				.withType(AlignmentValue.class)
+				.withDescription("")
+				.withDefaultValue(AlignmentValue.top)
+				.build());
+		addProperty(PepperModuleProperty.create()
+				.withName(PROP_HORIZONTAL_ALIGNMENT)
+				.withType(AlignmentValue.class)
+				.withDescription("")
+				.withDefaultValue(AlignmentValue.left)
+				.build());
 	}
 	
 	/**
@@ -52,7 +69,8 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	 * @return configured font name as {@link String}.
 	 */
 	public String getFont() {
-		return (String) getProperty(PROP_FONT_NAME).getValue();
+		Object value = getProperty(PROP_FONT_NAME).getValue();
+		return value == null? null : (String) value;
 	}
 	
 	public Map<String, Integer> getColumnOrder() {
@@ -79,5 +97,17 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 		return Arrays.stream(StringUtils.split((String) o, ","))
 				.map((String s) -> s.trim())
 				.collect(Collectors.toSet());
+	}
+	
+	public AlignmentValue getVerticalTextAlignment() {
+		return (AlignmentValue) getProperty(PROP_VERTICAL_ALIGNMENT).getValue();
+	}
+
+	public AlignmentValue getHorizontalTextAlignment() {
+		return (AlignmentValue) getProperty(PROP_HORIZONTAL_ALIGNMENT).getValue();
+	}
+	
+	public static enum AlignmentValue {
+		bottom, mid, top, left, center, right;
 	}
 }

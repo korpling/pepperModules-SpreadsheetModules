@@ -15,10 +15,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.ss.format.CellDateFormatter;
+import org.apache.poi.ss.format.CellFormat;
+import org.apache.poi.ss.format.CellFormatType;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -30,6 +35,7 @@ import org.corpus_tools.pepper.impl.PepperMapperImpl;
 import org.corpus_tools.pepper.modules.PepperMapper;
 import org.corpus_tools.pepper.modules.exceptions.PepperModuleDataException;
 import org.corpus_tools.pepper.modules.exceptions.PepperModuleException;
+import org.corpus_tools.peppermodules.spreadsheet.SpreadsheetExporterProperties.AlignmentValue;
 import org.corpus_tools.salt.common.SDocument;
 import org.corpus_tools.salt.common.SDocumentGraph;
 import org.corpus_tools.salt.common.SOrderRelation;
@@ -42,11 +48,16 @@ import org.corpus_tools.salt.core.SAnnotation;
 import org.corpus_tools.salt.core.SNode;
 import org.corpus_tools.salt.core.SRelation;
 import org.corpus_tools.salt.util.DataSourceSequence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMapper {
 	private static final String DEFAULT_TOK_NAME = "TOK";
 	private static final String ERR_MSG_NO_VALUE = "No value provided for cell. This might be due to a non-specified text or annotation value.";
 	private static final String ERR_MSG_NO_TEXTUAL_RELATION = "Token has no textual relation and cannot be mapped.";
+	private static final String WARNING_NO_TEXT_ANNOTATION = "No text value has been annotated for token span. Overlapped text is used instead.";
+	
+	private static final Logger logger = LoggerFactory.getLogger(Salt2SpreadsheetMapper.class);
 	
 	public Salt2SpreadsheetMapper() {
 		super();
@@ -69,19 +80,37 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		return DOCUMENT_STATUS.COMPLETED;
 	}
 	
-	private Font defaultFont = null;
 	private Map<String, Integer> columnOrder = null;
 	private boolean trimValues = false;
 	private Set<String> ignoreNames = null;
+	private CellStyle cellStyle = null;
 	
 	private void readProperties() {
-		SpreadsheetExporterProperties properties = (SpreadsheetExporterProperties) getProperties();
-		String fontName = properties.getFont();
-		defaultFont = getWorkbook().createFont();
-		defaultFont.setFontName(fontName);
+		SpreadsheetExporterProperties properties = (SpreadsheetExporterProperties) getProperties();		
 		columnOrder = properties.getColumnOrder();
 		trimValues = properties.trimValues();
-		ignoreNames = properties.ignoreAnnoNames(); 
+		ignoreNames = properties.ignoreAnnoNames();
+		cellStyle = getWorkbook().createCellStyle();
+		{
+			String fontName = properties.getFont();
+			if (fontName != null) {
+				Font defaultFont = getWorkbook().createFont();
+				defaultFont.setFontName(fontName);
+				cellStyle.setFont(defaultFont);
+			}
+			Map<AlignmentValue, Short> alignmentMap; {
+				alignmentMap = new HashMap<>();
+				alignmentMap.put(AlignmentValue.bottom, CellStyle.VERTICAL_BOTTOM);
+				alignmentMap.put(AlignmentValue.mid, CellStyle.VERTICAL_CENTER);
+				alignmentMap.put(AlignmentValue.top, CellStyle.VERTICAL_TOP);
+				alignmentMap.put(AlignmentValue.left, CellStyle.ALIGN_LEFT);
+				alignmentMap.put(AlignmentValue.center, CellStyle.ALIGN_CENTER);
+				alignmentMap.put(AlignmentValue.right, CellStyle.ALIGN_RIGHT);
+			}
+			cellStyle.setAlignment( alignmentMap.get(properties.getHorizontalTextAlignment()) );
+			cellStyle.setVerticalAlignment( alignmentMap.get(properties.getVerticalTextAlignment()) );
+			cellStyle.setDataFormat( getWorkbook().createDataFormat().getFormat("@") );
+		}
 	}
 	
 	private Workbook workbook = null;
@@ -152,8 +181,10 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				List<Integer>[] startValues = new ArrayList[orderNames.size()];
 				List<Integer>[] endValues = new ArrayList[orderNames.size()];
 				SNode[][] nodesByCoords = new SNode[upperBound][orderNames.size()];
+				String[] colNames = new String[orderNames.size()];
 				for (Entry<String, Iterator<SNode>> entry : getTokenGroups(orderNames).entrySet()) {
 					String colName = entry.getKey();
+					colNames[colIx] = colName;
 					Iterator<SNode> nodes = entry.getValue();
 					createEntry(0, colIx, 1, colName);
 					startValues[colIx] = new ArrayList<Integer>();
@@ -201,10 +232,19 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 						int start = startValues[c].get(r);
 						int end = endValues[c].get(r);
 						SNode sNode = nodesByCoords[start][c];
-						int[] entry = createEntry(coordMap.get(start), c, coordMap.get(end) - coordMap.get(start), getDocumentGraph().getText(sNode));
 						if (sNode instanceof SToken) {
+							int[] entry = createEntry(coordMap.get(start), c, coordMap.get(end) - coordMap.get(start), getDocumentGraph().getText(sNode));
 							tokToCoords.put((SToken) sNode, entry);
 						} else {
+							String text;
+							SAnnotation anno = sNode.getAnnotation(colNames[c]);
+							if (anno == null) {
+								logger.warn(WARNING_NO_TEXT_ANNOTATION);
+								text = getDocumentGraph().getText(sNode);
+							} else {
+								text = anno.getValue_STEXT();
+							}
+							int[] entry = createEntry(coordMap.get(start), c, coordMap.get(end) - coordMap.get(start), text);
 							for (SToken sTok : getDocumentGraph().getOverlappedTokens(sNode)) {
 								tokToCoords.put(sTok, entry);
 							}
@@ -235,7 +275,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		for (String name : tokNames) {
 			final SNode startNode = startNodes.get(name);
 			tokenizations.put(name, new Iterator<SNode>() {
-				final String ORDER_NAME = name;
+				private final String tokenizationName = name;
 				private SNode pointer = null;
 				
 				@Override
@@ -259,7 +299,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				
 				private Optional<SRelation> getOrderRelOpt(SNode node) {
 					return node.getOutRelations().stream()
-							.filter((SRelation r) -> r instanceof SOrderRelation && ORDER_NAME.equals(r.getType()))
+							.filter((SRelation r) -> r instanceof SOrderRelation && tokenizationName.equals(r.getType()))
 							.findAny();
 				}
 			});			
@@ -300,6 +340,15 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		return colIx;
 	}
 	
+	/** 
+	 * FIXME set cell types!
+	 * FIXME font does not work
+	 * @param rowIx
+	 * @param colIx
+	 * @param height
+	 * @param value
+	 * @return
+	 */
 	private int[] createEntry(int rowIx, int colIx, int height, String value) {
 		if (value == null) {
 			throw new PepperModuleDataException(this, ERR_MSG_NO_VALUE);
@@ -312,7 +361,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			Cell cell = row.getCell(colIx);
 			if (cell == null) {
 				cell = row.createCell(colIx);
-				cell.getCellStyle().setFont(defaultFont);
+				cell.setCellStyle(cellStyle);
 			}
 		}
 		getSheet().getRow(rowIx).getCell(colIx).setCellValue(trimValues? value.trim() : value);
