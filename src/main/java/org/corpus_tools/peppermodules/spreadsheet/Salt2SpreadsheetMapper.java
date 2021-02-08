@@ -15,13 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.format.CellDateFormatter;
-import org.apache.poi.ss.format.CellFormat;
-import org.apache.poi.ss.format.CellFormatType;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -50,6 +45,7 @@ import org.corpus_tools.salt.core.SRelation;
 import org.corpus_tools.salt.util.DataSourceSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMapper {
 	private static final String DEFAULT_TOK_NAME = "TOK";
@@ -341,8 +337,6 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	}
 	
 	/** 
-	 * FIXME set cell types!
-	 * FIXME font does not work
 	 * @param rowIx
 	 * @param colIx
 	 * @param height
@@ -350,6 +344,9 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	 * @return
 	 */
 	private int[] createEntry(int rowIx, int colIx, int height, String value) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Creating entry from row " + rowIx + " in column " + colIx + " for " + height + " rows to insert value \"" + value + "\"");
+		}
 		if (value == null) {
 			throw new PepperModuleDataException(this, ERR_MSG_NO_VALUE);
 		}
@@ -380,8 +377,8 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			for (SToken sTok : overlappedTokens) {
 				int[] coords = tokToCoords.get(sTok);
 				if (coords == null) {
-					throw new PepperModuleException("Token unknown: " + sTok.getId() + ":" + getDocumentGraph().getText(sTok));
-				}
+					throw new PepperModuleException("Token unknown: " + sTok.getId() + ":\"" + getDocumentGraph().getText(sTok) + "\"");
+				}				
 				minRow = Integer.min(minRow, coords[0]);
 				maxRow = Integer.max(maxRow, coords[0] + coords[2]);
 			}
@@ -390,6 +387,27 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					int colIx = getColumnIndex(sAnno.getQName());
 					createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
 				}
+			}
+		}
+		// remove announced, but unused/empty tiers
+		if (false && !columnOrder.isEmpty()) {
+			List<Integer> removeColumns = new ArrayList<>(columnOrder.values());
+			Row row = null;
+			for (Iterator<Row> itRows = getSheet().rowIterator(); itRows.hasNext(); row = itRows.next()) {
+				for (Integer colIx : columnOrder.values()) {
+					Cell cell = row.getCell(colIx);
+					if (cell != null && !cell.getRichStringCellValue().getString().isEmpty()) {
+						removeColumns.remove(colIx);
+					}
+				}
+				if (removeColumns.isEmpty()) {
+					break;
+				}
+			}
+			Collections.sort(removeColumns);
+			Collections.reverse(removeColumns);
+			for (Integer colIx : removeColumns) {
+				
 			}
 		}
 	}
