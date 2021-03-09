@@ -400,27 +400,6 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				}
 			}
 		}
-		// remove announced, but unused/empty tiers
-		if (false && !columnOrder.isEmpty()) {
-			List<Integer> removeColumns = new ArrayList<>(columnOrder.values());
-			Row row = null;
-			for (Iterator<Row> itRows = getSheet().rowIterator(); itRows.hasNext(); row = itRows.next()) {
-				for (Integer colIx : columnOrder.values()) {
-					Cell cell = row.getCell(colIx);
-					if (cell != null && !cell.getRichStringCellValue().getString().isEmpty()) {
-						removeColumns.remove(colIx);
-					}
-				}
-				if (removeColumns.isEmpty()) {
-					break;
-				}
-			}
-			Collections.sort(removeColumns);
-			Collections.reverse(removeColumns);
-			for (Integer colIx : removeColumns) {
-				
-			}
-		}
 	}
 	
 	private void writeWorkbook() {
