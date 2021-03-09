@@ -377,6 +377,17 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			for (SToken sTok : overlappedTokens) {
 				int[] coords = tokToCoords.get(sTok);
 				if (coords == null) {
+					if (logger.isDebugEnabled()) {
+						StringBuilder debugBuilder = new StringBuilder();
+						debugBuilder.append("Token is unknown, but has annotations:");						
+						for (SAnnotation sAnno : sSpan.getAnnotations()) {
+							debugBuilder.append(sAnno.getName());
+							debugBuilder.append("=");
+							debugBuilder.append(sAnno.getValue_STEXT());
+							debugBuilder.append(";");
+						}
+						logger.debug(debugBuilder.toString());
+					}
 					throw new PepperModuleException("Token unknown: " + sTok.getId() + ":\"" + getDocumentGraph().getText(sTok) + "\"");
 				}				
 				minRow = Integer.min(minRow, coords[0]);
