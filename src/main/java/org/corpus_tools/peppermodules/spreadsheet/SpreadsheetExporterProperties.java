@@ -24,6 +24,8 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	public static final String PROP_VERTICAL_ALIGNMENT = "text.align.vertical";
 	/** TODO This property defines the preferred horizontal alignment. */
 	public static final String PROP_HORIZONTAL_ALIGNMENT = "text.align.horizontal";
+	/** Creates a column containing the document name if a String header value is provided. **/
+	public static final String PROP_DOC_COL_TITLE = "document.column.title";
 	
 	public SpreadsheetExporterProperties() {
 		addProperty(PepperModuleProperty.create()
@@ -61,6 +63,11 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 				.withType(AlignmentValue.class)
 				.withDescription("")
 				.withDefaultValue(AlignmentValue.left)
+				.build());
+		addProperty(PepperModuleProperty.create()
+				.withName(PROP_DOC_COL_TITLE)
+				.withType(String.class)
+				.withDescription("Creates a column containing the document name if a String header value is provided.")
 				.build());
 	}
 	
@@ -109,5 +116,10 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	
 	public static enum AlignmentValue {
 		bottom, mid, top, left, center, right;
+	}
+	
+	public String getDocumentColumnTitle() {
+		Object value = getProperty(PROP_DOC_COL_TITLE);
+		return value == null? null : (String) value;
 	}
 }

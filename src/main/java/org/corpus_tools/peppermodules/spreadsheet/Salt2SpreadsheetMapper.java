@@ -50,8 +50,12 @@ import org.slf4j.LoggerFactory;
 public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMapper {
 	private static final String DEFAULT_TOK_NAME = "TOK";
 	private static final String ERR_MSG_NO_VALUE = "No value provided for cell. This might be due to a non-specified text or annotation value.";
+	private static final String ERR_MSG_NO_SHEET = "Could not create entry: Sheet is null.";
+	private static final String ERR_MSG_NO_ROW = "Could not create entry: Row is null.";
+	private static final String ERR_MSG_NO_CELL = "Could not create entry: Cell is null.";
 	private static final String ERR_MSG_NO_TEXTUAL_RELATION = "Token has no textual relation and cannot be mapped.";
 	private static final String WARNING_NO_TEXT_ANNOTATION = "No text value has been annotated for token span. Overlapped text is used instead.";
+	private static final String ERR_MSG_DOCNAME_IN_USE = "The annotation name chosen for the document column is already in use.";
 	
 	private static final Logger logger = LoggerFactory.getLogger(Salt2SpreadsheetMapper.class);
 	
@@ -71,7 +75,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 		}
 		readProperties();
 		mapTokenizations();
-		mapSpansAndAnnotations();
+		mapSpansAndAnnotations();		
 		writeWorkbook();
 		return DOCUMENT_STATUS.COMPLETED;
 	}
@@ -80,6 +84,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	private boolean trimValues = false;
 	private Set<String> ignoreNames = null;
 	private CellStyle cellStyle = null;
+	private String docColTitle = null;
 	
 	private void readProperties() {
 		SpreadsheetExporterProperties properties = (SpreadsheetExporterProperties) getProperties();		
@@ -107,6 +112,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 			cellStyle.setVerticalAlignment( alignmentMap.get(properties.getVerticalTextAlignment()) );
 			cellStyle.setDataFormat( getWorkbook().createDataFormat().getFormat("@") );
 		}
+		docColTitle = properties.getDocumentColumnTitle();
 	}
 	
 	private Workbook workbook = null;
@@ -343,17 +349,21 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 	 * @param value
 	 * @return
 	 */
-	private int[] createEntry(int rowIx, int colIx, int height, String value) {
+	private int[] createEntry(int rowIx, int colIx, int height, String value) {		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating entry from row " + rowIx + " in column " + colIx + " for " + height + " rows to insert value \"" + value + "\"");
 		}
 		if (value == null) {
 			throw new PepperModuleDataException(this, ERR_MSG_NO_VALUE);
 		}
+		Sheet sheet = getSheet();
+		if (sheet == null) {
+			throw new PepperModuleDataException(this, ERR_MSG_NO_SHEET);
+		}
 		for (int ri = 0; ri < height; ri++) {
-			Row row = getSheet().getRow(rowIx + ri);
+			Row row = sheet.getRow(rowIx + ri);
 			if (row == null) {
-				row = getSheet().createRow(rowIx + ri);
+				row = sheet.createRow(rowIx + ri);
 			}
 			Cell cell = row.getCell(colIx);
 			if (cell == null) {
@@ -361,9 +371,17 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				cell.setCellStyle(cellStyle);
 			}
 		}
-		getSheet().getRow(rowIx).getCell(colIx).setCellValue(trimValues? value.trim() : value);
+		Row row = sheet.getRow(rowIx);
+		if (row == null) {
+			throw new PepperModuleDataException(this, ERR_MSG_NO_ROW);
+		}
+		Cell cell = row.getCell(colIx);
+		if (cell == null) {
+			throw new PepperModuleDataException(this, ERR_MSG_NO_CELL);
+		}
+		cell.setCellValue(trimValues? value.trim() : value);
 		if (height > 1) {
-			getSheet().addMergedRegion(new CellRangeAddress(rowIx, rowIx + height - 1, colIx, colIx));
+			sheet.addMergedRegion(new CellRangeAddress(rowIx, rowIx + height - 1, colIx, colIx));
 		}
 		return new int[]{rowIx, colIx, height};
 	}
@@ -399,6 +417,13 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 					createEntry(minRow, colIx, maxRow - minRow, sAnno.getValue_STEXT());
 				}
 			}
+		}
+		if (docColTitle != null) {
+			if (annoQNameToColIx.containsKey(docColTitle)) {
+				throw new PepperModuleDataException(this, ERR_MSG_DOCNAME_IN_USE);
+			}
+			int colIx = getColumnIndex(docColTitle);
+			createEntry(0, colIx, getSheet().getLastRowNum(), getDocument().getName());
 		}
 	}
 	
