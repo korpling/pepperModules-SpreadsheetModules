@@ -119,7 +119,7 @@ public class SpreadsheetExporterProperties extends PepperModuleProperties {
 	}
 	
 	public String getDocumentColumnTitle() {
-		Object value = getProperty(PROP_DOC_COL_TITLE);
+		Object value = getProperty(PROP_DOC_COL_TITLE).getValue();
 		return value == null? null : (String) value;
 	}
 }
