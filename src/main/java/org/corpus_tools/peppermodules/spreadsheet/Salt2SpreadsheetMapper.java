@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -99,17 +101,17 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				defaultFont.setFontName(fontName);
 				cellStyle.setFont(defaultFont);
 			}
-			Map<AlignmentValue, Short> alignmentMap; {
+			Map<AlignmentValue, Object> alignmentMap; {
 				alignmentMap = new HashMap<>();
-				alignmentMap.put(AlignmentValue.bottom, CellStyle.VERTICAL_BOTTOM);
-				alignmentMap.put(AlignmentValue.mid, CellStyle.VERTICAL_CENTER);
-				alignmentMap.put(AlignmentValue.top, CellStyle.VERTICAL_TOP);
-				alignmentMap.put(AlignmentValue.left, CellStyle.ALIGN_LEFT);
-				alignmentMap.put(AlignmentValue.center, CellStyle.ALIGN_CENTER);
-				alignmentMap.put(AlignmentValue.right, CellStyle.ALIGN_RIGHT);
+				alignmentMap.put(AlignmentValue.bottom, VerticalAlignment.BOTTOM);
+				alignmentMap.put(AlignmentValue.mid, VerticalAlignment.CENTER);
+				alignmentMap.put(AlignmentValue.top, VerticalAlignment.TOP);
+				alignmentMap.put(AlignmentValue.left, HorizontalAlignment.LEFT);
+				alignmentMap.put(AlignmentValue.center, HorizontalAlignment.CENTER);
+				alignmentMap.put(AlignmentValue.right, HorizontalAlignment.RIGHT);
 			}
-			cellStyle.setAlignment( alignmentMap.get(properties.getHorizontalTextAlignment()) );
-			cellStyle.setVerticalAlignment( alignmentMap.get(properties.getVerticalTextAlignment()) );
+			cellStyle.setAlignment( (HorizontalAlignment) alignmentMap.get(properties.getHorizontalTextAlignment()) );
+			cellStyle.setVerticalAlignment( (VerticalAlignment) alignmentMap.get(properties.getVerticalTextAlignment()) );
 			cellStyle.setDataFormat( getWorkbook().createDataFormat().getFormat("@") );
 		}
 		docColTitle = properties.getDocumentColumnTitle();
@@ -423,7 +425,7 @@ public class Salt2SpreadsheetMapper extends PepperMapperImpl implements PepperMa
 				throw new PepperModuleDataException(this, ERR_MSG_DOCNAME_IN_USE);
 			}
 			int colIx = getColumnIndex(docColTitle);
-			createEntry(0, colIx, getSheet().getLastRowNum(), getDocument().getName());
+			createEntry(1, colIx, getSheet().getLastRowNum(), getDocument().getName());
 		}
 	}
 	
