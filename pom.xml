@@ -109,7 +109,7 @@
 						<Service-Component>${allServiceComponents}</Service-Component>
 						<Include-Resource>{maven-resources}, LICENSE, NOTICE</Include-Resource>
 						<Embed-Dependency>poi,poi-ooxml,ooxml-security,commons-codec,poi-scratchpad,xmlbeans,xml-resolver,bcprov-jdk16,ooxml-schemas</Embed-Dependency>
-						<Import-Package>!org.junit.*,!junit.*,!com.sun.javadoc,!com.sun.tools.javadoc,!org.apache.tools.ant.*,!org.bouncycastle.*,!org.apache.jcp.*,!org.apache.xml.*,!org.apache.crimson.*,*</Import-Package>
+						<Import-Package>!org.junit.*,!junit.*,!com.microsoft.schemas.*,!com.sun.javadoc,!com.sun.tools.javadoc,!org.apache.commons.collections4*,!org.apache.tools.ant.*,!org.bouncycastle.*,!org.apache.jcp.*,!org.apache.xml.*,!org.apache.crimson.*,!com.graphbuilder.*,*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
