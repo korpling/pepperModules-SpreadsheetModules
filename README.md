@@ -148,6 +148,7 @@ The table contains an overview of all usable properties to customize the behavio
 |metaAnnotation		   |Boolean	                                                     |optional            |	true |
 |includeEmptyPrimCells |Boolean	                                                     |optional            |	false |
 |addOrderRelation  	   |Boolean	                                                     |optional            |	true |
+|parseNamespace        |Boolean                                                      |optional            | false |
 
 ### corpusSheet
 With the property corpusSheet you can define the sheet that holds the actual corpus information. If you do not set this property, the first sheet will allways be interpreted as the sheet that holds the primary text.
@@ -214,6 +215,9 @@ If the primary text tier of your corpus contains empty cells you need to set the
 ### addOrderRelation
 If your corpus contains more than one primary text tier, you need order relations between the tokens of your corpus, therefore the default value of the property addOrderRelation is set to true. Otherwise if your corpus contains only one primary text tier the order of the tokens of your corpus is set automatically and you can set this property to false. If your corpus only contains one, empty primary text tier you *need* to set the property addOrderRelation to false.
 
+### parseNamespace
+
+If true, the part of the column name before '::' is interpreted as namespace of the annotation (instead of beeing a part of the name itself).
 
 ## Contribute
 Since this Pepper module is under a free license, please feel free to fork it from github and improve the module. If you even think that others can benefit from your improvements, don't hesitate to make a pull request, so that your changes can be merged.
