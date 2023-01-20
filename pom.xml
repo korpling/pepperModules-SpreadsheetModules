@@ -16,11 +16,6 @@
 		<url>https://github.com/korpling/pepperModules-SpreadsheetModules/issues</url>
 	</issueManagement>
 
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://korpling.german.hu-berlin.de/jenkins/</url>
-	</ciManagement>
-
 	<inceptionYear>2010</inceptionYear>
 
 	<organization>
@@ -28,7 +23,7 @@
 	</organization>
 	<scm>
 
-		<developerConnection>scm:git:ssh://git@github.com:korpling/pepperModules-SpreadsheetModules.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:korpling/pepperModules-SpreadsheetModules.git</developerConnection>
 		<url>scm:git:https://github.com/korpling/pepperModules-SpreadsheetModules.git</url>
 	  <tag>HEAD</tag>
   </scm>
