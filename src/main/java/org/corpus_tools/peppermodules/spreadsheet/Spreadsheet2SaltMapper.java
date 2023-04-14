@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -108,7 +107,7 @@ public class Spreadsheet2SaltMapper extends PepperMapperImpl implements PepperMa
       workbook = WorkbookFactory.create(excelFileStream);
       workbook.close();
 
-    } catch (IOException | EncryptedDocumentException | InvalidFormatException e) {
+    } catch (IOException | EncryptedDocumentException e) {
       SpreadsheetImporter.logger.warn("Could not open file '" + resource + "'.");
     }
 
