@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>pepperModules-SpreadsheetModules</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<packaging>bundle</packaging>
 	
 	<url>https://github.com/korpling/pepperModules-SpreadsheetModules</url>
@@ -25,11 +25,10 @@
 
 		<developerConnection>scm:git:git@github.com:korpling/pepperModules-SpreadsheetModules.git</developerConnection>
 		<url>scm:git:https://github.com/korpling/pepperModules-SpreadsheetModules.git</url>
-	  <tag>pepperModules-SpreadsheetModules-0.1.0</tag>
+	  <tag>HEAD</tag>
   </scm>
   <properties>
-	<poi.version>3.17</poi.version>
-	<poi.additionals.version>1.1</poi.additionals.version>
+	<poi.version>5.2.3 </poi.version>
   </properties>
 
 	<dependencies>
@@ -46,17 +45,16 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>ooxml-security</artifactId>
-			<version>${poi.additionals.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
 			<scope>compile</scope>
 		</dependency>
+		  <dependency>
+        <groupId>commons-io</groupId>
+	        <artifactId>commons-io</artifactId>
+	        <version>2.11.0</version>
+	    </dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
@@ -64,15 +62,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>ooxml-schemas</artifactId>
-			<version>${poi.additionals.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
-			<version>3.0.0</version>
+			<version>5.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -106,8 +98,6 @@
 						<Bundle-RequiredExecutionEnvironment>JavaSE-${java.version}</Bundle-RequiredExecutionEnvironment>
 						<Service-Component>${allServiceComponents}</Service-Component>
 						<Include-Resource>{maven-resources}, LICENSE, NOTICE</Include-Resource>
-						<Embed-Dependency>poi,poi-ooxml,ooxml-security,commons-codec,poi-scratchpad,xmlbeans,xml-resolver,bcprov-jdk16,ooxml-schemas,commons-collections4</Embed-Dependency>
-						<Import-Package>!org.junit.*,!junit.*,!com.microsoft.schemas.*,!com.sun.javadoc,!com.sun.tools.javadoc,!org.apache.commons.collections4*,!org.apache.tools.ant.*,!org.bouncycastle.*,!org.apache.jcp.*,!org.apache.xml.*,!org.apache.crimson.*,!com.graphbuilder.*,*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
