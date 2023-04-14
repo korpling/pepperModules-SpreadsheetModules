@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>pepperModules-SpreadsheetModules</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
-	<version>0.2.1</version>
+	<version>0.2.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	
 	<url>https://github.com/korpling/pepperModules-SpreadsheetModules</url>
