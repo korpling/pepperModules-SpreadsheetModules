@@ -28,7 +28,8 @@
 	  <tag>HEAD</tag>
   </scm>
   <properties>
-	<poi.version>5.2.3 </poi.version>
+	<poi.version>3.17</poi.version>
+	<poi.additionals.version>1.1</poi.additionals.version>
   </properties>
 
 	<dependencies>
@@ -45,16 +46,17 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>ooxml-security</artifactId>
+			<version>${poi.additionals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
 			<scope>compile</scope>
 		</dependency>
-		  <dependency>
-        <groupId>commons-io</groupId>
-	        <artifactId>commons-io</artifactId>
-	        <version>2.11.0</version>
-	    </dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
@@ -62,9 +64,15 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>ooxml-schemas</artifactId>
+			<version>${poi.additionals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
-			<version>5.1.1</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -98,7 +106,7 @@
 						<Bundle-RequiredExecutionEnvironment>JavaSE-${java.version}</Bundle-RequiredExecutionEnvironment>
 						<Service-Component>${allServiceComponents}</Service-Component>
 						<Include-Resource>{maven-resources}, LICENSE, NOTICE</Include-Resource>
-						<Embed-Dependency>poi,poi-ooxml,commons-io,commons-codec,poi-scratchpad,xmlbeans,xml-resolver,commons-collections4</Embed-Dependency>
+						<Embed-Dependency>poi,poi-ooxml,ooxml-security,commons-codec,poi-scratchpad,xmlbeans,xml-resolver,bcprov-jdk16,ooxml-schemas,commons-collections4</Embed-Dependency>
 						<Import-Package>!org.junit.*,!junit.*,!com.microsoft.schemas.*,!com.sun.javadoc,!com.sun.tools.javadoc,!org.apache.commons.collections4*,!org.apache.tools.ant.*,!org.bouncycastle.*,!org.apache.jcp.*,!org.apache.xml.*,!org.apache.crimson.*,!com.graphbuilder.*,*</Import-Package>
 					</instructions>
 				</configuration>
