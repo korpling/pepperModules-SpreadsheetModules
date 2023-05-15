@@ -38,26 +38,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>${poi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>${poi.version}</version>
-
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-scratchpad</artifactId>
-			<version>${poi.version}</version>
-
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml-lite</artifactId>
-			<version>${poi.version}</version>
+			<groupId>org.apache.servicemix.bundles</groupId>
+			<artifactId>org.apache.servicemix.bundles.poi</artifactId>
+			<version>5.2.3_1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -65,40 +48,15 @@
 			<version>2.11.0</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.15</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-			<version>4.4</version>
+			<artifactId>commons-compress</artifactId>
+			<version>1.23.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>3.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>SparseBitSet</artifactId>
-			<version>1.2</version>
-		</dependency>
-				<dependency>
-				<groupId>com.github.virtuald</groupId>
-				<artifactId>curvesapi</artifactId>
-				<version>1.07</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-compress</artifactId>
-				<version>1.21</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans</artifactId>
-				<version>5.1.1</version>
-			</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -106,7 +64,6 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>3.5.0</version>
 				<extensions>true</extensions>
 				<configuration>
 					<manifestLocation>${META-INF}</manifestLocation>
@@ -122,55 +79,6 @@
 						<Service-Component>${allServiceComponents}</Service-Component>
 						<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
 						<Include-Resource>{maven-resources}, LICENSE, NOTICE</Include-Resource>
-						<Bundle-Activator>
-							org.apache.poi.osgi.Activator
-						</Bundle-Activator>
-						<Embed-Dependency>
-							poi;inline=true,
-							poi-ooxml;inline=true,
-							poi-scratchpad;inline=true,
-							poi-ooxml-lite;inline=true,
-							commons-codec;inline=true,
-							commons-io;inline=true,
-							commons-collections4;inline=true,
-							commons-math3;inline=true,
-							commons-compress;inline=true,
-							curvesapi;inline=true,
-							xmlbeans;inline=true,
-							SparseBitSet,inline=true
-						</Embed-Dependency>
-					
-						<Import-Package>
-							!org.junit.*,
-							!junit.*,
-							!com.microsoft.schemas.*,
-							!com.sun.*,
-							!org.apache.commons.collections4*,
-							!org.apache.tools.ant.*,
-							!org.bouncycastle.*,
-							!org.apache.jcp.*,
-							!org.apache.xml.*,
-							!org.apache.crimson.*,
-							!com.graphbuilder.*,
-							!com.zaxxer.*,
-							!de.rototor.pdfbox.*,
-							!org.apache.pdfbox.*,
-							!javax.servlet.*,
-							!org.apache.batik.*,
-							!com.thoughtworks.*,
-							!javax.*,
-							!com.github.*,
-							!net.sf.*,
-							!org.apache.logging.*,
-							!org.apache.maven.*,
-							!org.assertj.*,
-							!org.brotli.*,
-							!org.iso_relax.*,
-							!org.knallgrau.*,
-							!org.mockito.*,
-							!org.objectweb.*,
-							*
-						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
